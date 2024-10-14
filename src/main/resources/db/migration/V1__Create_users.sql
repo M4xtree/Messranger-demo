@@ -4,17 +4,6 @@ CREATE TABLE users (
   phone_number VARCHAR NOT NULL UNIQUE
 );
 
-CREATE TABLE messages (
-    id VARCHAR PRIMARY KEY,
-    chat_id VARCHAR NOT NULL REFERENCES chat(id),
-    sender_id VARCHAR NOT NULL REFERENCES user(id),
-    content VARCHAR NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_deleted BOOLEAN DEFAULT FALSE,
-    is_read BOOLEAN DEFAULT FALSE,
-    edited_at TIMESTAMP
-);
-
 CREATE TABLE chat (
   id VARCHAR PRIMARY KEY,
   creator_id VARCHAR REFERENCES users(id),
@@ -25,10 +14,21 @@ CREATE TABLE chat (
   chat_type CHAR NOT NULL
 );
 
+CREATE TABLE messages (
+    id VARCHAR PRIMARY KEY,
+    chat_id VARCHAR NOT NULL REFERENCES chat(id),
+    sender_id VARCHAR NOT NULL REFERENCES users(id),
+    content VARCHAR NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    is_read BOOLEAN DEFAULT FALSE,
+    edited_at TIMESTAMP
+);
+
 CREATE TABLE members (
     chat_id VARCHAR NOT NULL REFERENCES chat(id),
-    user_id VARCHAR NOT NULL REFERENCES user(id),
-    role VARCHAR(20) DEFAULT 'member'
+    user_id VARCHAR NOT NULL REFERENCES users(id),
+    role VARCHAR DEFAULT 'member',
     can_delete_messages BOOLEAN DEFAULT FALSE,
     can_add_participants BOOLEAN DEFAULT FALSE,
     can_edit_messages BOOLEAN DEFAULT FALSE,
