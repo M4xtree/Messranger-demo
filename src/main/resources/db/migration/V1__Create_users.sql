@@ -4,6 +4,16 @@ CREATE TABLE users (
   phone_number VARCHAR NOT NULL UNIQUE
 );
 
+CREATE TABLE chat (
+    id VARCHAR PRIMARY KEY,
+    type VARCHAR NOT NULL,
+    created_by INT NOT NULL REFERENCES users(id),
+    name VARCHAR,
+    description VARCHAR,
+    is_private BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE messages (
     id VARCHAR PRIMARY KEY,
     chat_id VARCHAR NOT NULL REFERENCES chat(id),
@@ -15,15 +25,6 @@ CREATE TABLE messages (
     edited_at TIMESTAMP
 );
 
-CREATE TABLE chat (
-  id VARCHAR PRIMARY KEY,
-  creator_id VARCHAR REFERENCES users(id),
-  parent_id VARCHAR,
-  pin_id VARCHAR,
-  chat VARCHAR not null,
-  name VARCHAR not null,
-  chat_type CHAR NOT NULL
-);
 
 CREATE TABLE members (
     chat_id VARCHAR NOT NULL REFERENCES chat(id),

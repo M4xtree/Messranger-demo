@@ -29,7 +29,7 @@ public class ChatRepository extends BaseRepository<Chat> {
 
     @Override
     protected String[] getColumnNames() {
-        return new String[]{"creator_id", "parent_id", "pin_id", "chat", "name", "chat_type"};
+        return new String[]{"type", "created_by", "name", "description", "is_private", "created_at"};
     }
 
     @Override
@@ -43,25 +43,19 @@ public class ChatRepository extends BaseRepository<Chat> {
         if (filter.getId() != null) {
             filterColumns.add("id");
         }
-        if (filter.getCreatorId() != null) {
-            filterColumns.add("creator_id");
+        if (filter.getType() != null) {
+            filterColumns.add("type");
         }
-        if (filter.getParentId() != null) {
-            filterColumns.add("parent_id");
-        }
-        if (filter.getPinId() != null) {
-            filterColumns.add("pin_id");
-        }
-        if (filter.getChat() != null) {
-            filterColumns.add("chat");
+        if (filter.getCreatedBy() != null) {
+            filterColumns.add("created_by");
         }
         if (filter.getName() != null) {
             filterColumns.add("name");
         }
-        if (filter.getChatType() != null) {
-            filterColumns.add("chat_type");
+        if (filter.getDescription() != null) {
+            filterColumns.add("description");
         }
-        return filterColumns.toArray(new String[filterColumns.size()]);
+        return filterColumns.toArray(new String[0]);
     }
 
     @Override
@@ -69,18 +63,13 @@ public class ChatRepository extends BaseRepository<Chat> {
         List<FilterColumn<?>> result = new ArrayList<>();
         Optional.ofNullable(filter.getId())
                 .ifPresent(it -> result.add(new FilterColumn<>("id", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
-        Optional.ofNullable(filter.getCreatorId())
-                .ifPresent(it -> result.add(new FilterColumn<>("creator_id", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
-        Optional.ofNullable(filter.getParentId())
-                .ifPresent(it -> result.add(new FilterColumn<>("parent_id", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
-        Optional.ofNullable(filter.getPinId())
-                .ifPresent(it -> result.add(new FilterColumn<>("pin_id", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
-        Optional.ofNullable(filter.getChat())
-                .ifPresent(it -> result.add(new FilterColumn<>("chat", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
+        Optional.ofNullable(filter.getType())
+                .ifPresent(it -> result.add(new FilterColumn<>("type", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
+        Optional.ofNullable(filter.getCreatedBy())
+                .filter(it -> it != null)
+                .ifPresent(it -> result.add(new FilterColumn<>("created_by", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
         Optional.ofNullable(filter.getName())
-                .ifPresent(it -> result.add(new FilterColumn<>("name", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
-        Optional.ofNullable(filter.getChatType())
-                .ifPresent(it -> result.add(new FilterColumn<>("chat_type", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
+                .ifPresent(it -> result.add(new FilterColumn<>("name", "LIKE", "%" + it + "%", (stmt, idx) -> stmt.setString(idx, "%" + it + "%"))));
         return result;
     }
 
@@ -90,58 +79,49 @@ public class ChatRepository extends BaseRepository<Chat> {
         if (filter.getId() != null) {
             statement.setString(index++, filter.getId());
         }
-        if (filter.getCreatorId()!= null) {
-            statement.setString(index++, filter.getCreatorId());
+        if (filter.getType() != null) {
+            statement.setString(index++, filter.getType());
         }
-        if (filter.getParentId() != null) {
-            statement.setString(index++, filter.getParentId());
-        }
-        if (filter.getPinId() != null) {
-            statement.setString(index++, filter.getPinId());
-        }
-        if (filter.getChat()!= null) {
-            statement.setString(index++, filter.getChat());
+        if (filter.getCreatedBy() != null) {
+            statement.setString(index++, filter.getCreatedBy());
         }
         if (filter.getName() != null) {
             statement.setString(index++, filter.getName());
-        }
-        if (filter.getChatType() != null) {
-            statement.setString(index++, filter.getChatType());
         }
         return index;
     }
 
     @Override
-    protected void prepareInsertStatement(PreparedStatement statement, Chat user) throws SQLException {
-        statement.setString(1, user.getId());
-        statement.setString(2, user.getCreatorId());
-        statement.setString(3, user.getParentId());
-        statement.setString(4, user.getPinId());
-        statement.setString(5, user.getChat());
-        statement.setString(6, user.getName());
-        statement.setString(7, user.getChatType());
+    protected void prepareInsertStatement(PreparedStatement statement, Chat chat) throws SQLException {
+        statement.setString(1, chat.getType());
+        statement.setString(2, chat.getCreatedBy());
+        statement.setString(3, chat.getName());
+        statement.setString(4, chat.getDescription());
+        statement.setBoolean(5, chat.isPrivate());
+        statement.setTimestamp(6, Timestamp.valueOf(chat.getCreatedAt()));
     }
 
     @Override
-    protected void prepareUpdateStatement(PreparedStatement statement, Chat user) throws SQLException {
-        statement.setString(1, user.getCreatorId());
-        statement.setString(2, user.getParentId());
-        statement.setString(3, user.getPinId());
-        statement.setString(4, user.getChat());
-        statement.setString(5, user.getName());
-        statement.setString(6, user.getChatType());
-        statement.setString(7, user.getId());
+    protected void prepareUpdateStatement(PreparedStatement statement, Chat chat) throws SQLException {
+        statement.setString(1, chat.getType());
+        statement.setString(2, chat.getCreatedBy());
+        statement.setString(3, chat.getName());
+        statement.setString(4, chat.getDescription());
+        statement.setBoolean(5, chat.isPrivate());
+        statement.setTimestamp(6, Timestamp.valueOf(chat.getCreatedAt()));
+        statement.setString(7, chat.getId());
     }
 
     @Override
     protected Chat mapResultSetToEntity(ResultSet resultSet) throws SQLException {
-        String creatorId = resultSet.getString("creator_id");
-        String parentId = resultSet.getString("parent_id");
-        String pinId = resultSet.getString("pin_id");
-        String chat = resultSet.getString("chat");
-        String name = resultSet.getString("name");
-        String chatType = resultSet.getString("chat_type");
-        return new Chat(creatorId, parentId, pinId, chat, name, chatType);
+        return new Chat(
+                resultSet.getString("type"),
+                resultSet.getString("created_by"),
+                resultSet.getString("name"),
+                resultSet.getString("description"),
+                resultSet.getBoolean("is_private"),
+                resultSet.getTimestamp("created_at").toLocalDateTime()
+        );
     }
 
     @Override

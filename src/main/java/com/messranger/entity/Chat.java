@@ -1,56 +1,40 @@
 package com.messranger.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class Chat extends Identifier{
-
-    private String creatorId;
-    private String parentId;
-    private String pinId;
-    private String chat;
+public class Chat extends Identifier {
+    private String type;  // 'p2p', 'group', 'channel'
+    private String createdBy;
     private String name;
-    private String chatType;
+    private String description;
+    private boolean isPrivate;
+    private LocalDateTime createdAt;
 
-    public Chat(String creatorId, String parentId, String pinId, String chat, String name, String chatType) {
-        this.creatorId = creatorId;
-        this.parentId = parentId;
-        this.pinId = pinId;
-        this.chat = chat;
+    public Chat(String type, String createdBy, String name, String description, boolean isPrivate, LocalDateTime createdAt) {
+        this.type = type;
+        this.createdBy = createdBy;
         this.name = name;
-        this.chatType = chatType;
+        this.description = description;
+        this.isPrivate = isPrivate;
+        this.createdAt = createdAt;
     }
 
-    public String getCreatorId() {
-        return creatorId;
+    public String getType() {
+        return type;
     }
 
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public String getParentId() {
-        return parentId;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getPinId() {
-        return pinId;
-    }
-
-    public void setPinId(String pinId) {
-        this.pinId = pinId;
-    }
-
-    public String getChat() {
-        return chat;
-    }
-
-    public void setChat(String chat) {
-        this.chat = chat;
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     public String getName() {
@@ -61,11 +45,27 @@ public class Chat extends Identifier{
         this.name = name;
     }
 
-    public String getChatType() {
-        return chatType;
+    public String getDescription() {
+        return description;
     }
 
-    public void setChatType(String chatType) {
-        this.chatType = chatType;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
