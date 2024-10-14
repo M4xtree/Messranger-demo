@@ -1,25 +1,20 @@
 package com.messranger.entity;
+import javax.print.DocFlavor;
 import java.util.*;
 import java.net.*;
 import java.io.*;
 
-public class User{
-    private String id = UUID.randomUUID().toString();
+public class User extends Identifier{
     private String nickname;
     private String phoneNumber;
     private boolean status;
     private boolean verifiedAccount;
 
-    //private ServerSocket socket;
-    private AttachedItems profilePhoto;
-
     public User(String nickname, String phoneNumber) {
         this.nickname = nickname;
         this.phoneNumber = phoneNumber;
-    }
-
-    public String getId() {
-        return id;
+        this.status = true;
+        this.verifiedAccount = true;
     }
 
     public String getNickname() {
@@ -38,7 +33,19 @@ public class User{
         return verifiedAccount;
     }
 
-    public AttachedItems getProfilePhoto() {
-        return profilePhoto;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public void setVerifiedAccount(boolean verifiedAccount) {
+        this.verifiedAccount = verifiedAccount;
     }
 }

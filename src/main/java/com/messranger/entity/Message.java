@@ -1,32 +1,59 @@
 package com.messranger.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.SimpleTimeZone;
-import java.util.UUID;
+import java.time.LocalTime;
 
-public class Message {
-    private String id = UUID.randomUUID().toString();
-    private String message;
-    private ArrayList<AttachedItems> attachments;
-    private LocalDateTime creationDate = LocalDateTime.now();
+public class Message extends  Identifier{
+    private String chatId;
+    private String messageText;
 
-    public Message(String message, ArrayList<AttachedItems> attachments) {
-        this.message = message;
-        this.attachments = attachments;
+    private LocalDate date = LocalDate.now();
+    private LocalTime time = LocalTime.now();
+
+    private boolean isPinned;
+
+    public Message(String chatId, String messageText, LocalDate date, LocalTime time, boolean isPinned) {
+        this.chatId = chatId;
+        this.messageText = messageText;
+        this.date = date;
+        this.time = time;
+        this.isPinned = isPinned;
     }
 
-    public String getMessage() {
-        return message;
+    public String getChatId() {
+        return chatId;
     }
 
-    public ArrayList<AttachedItems> getAttachments() {
-        return attachments;
+    public String getMessageText() {
+        return messageText;
     }
 
-    public LocalDateTime getCreationDate() {
-        return creationDate;
+    public void setMessageText(String messageText) {
+        this.messageText = messageText;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public boolean isPinned() {
+        return isPinned;
+    }
+
+    public void setPinned(boolean pinned) {
+        isPinned = pinned;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public void setTime(LocalTime time) {
+        this.time = time;
     }
 }

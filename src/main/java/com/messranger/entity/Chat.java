@@ -3,56 +3,69 @@ package com.messranger.entity;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class Chat{
-    private String id = UUID.randomUUID().toString();
-    private String parentId;
+public class Chat extends Identifier{
+
     private String creatorId;
-    private String adminId;
-    private String membersId;
+    private String parentId;
     private String pinId;
-    private String messageId;
-
+    private String chat;
     private String name;
+    private String chatType;
 
-    private int countOfMembers;
-    //private AttachedItems chatAttachments;
-
-    //id участников,имя,тип,родители,закрепы,админы,группы
-
-
-    public String getId() {
-        return id;
-    }
-
-    public String getParentId() {
-        return parentId;
+    public Chat(String creatorId, String parentId, String pinId, String chat, String name, String chatType) {
+        this.creatorId = creatorId;
+        this.parentId = parentId;
+        this.pinId = pinId;
+        this.chat = chat;
+        this.name = name;
+        this.chatType = chatType;
     }
 
     public String getCreatorId() {
         return creatorId;
     }
 
-    public String getAdminId() {
-        return adminId;
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
     }
 
-    public String getMembersId() {
-        return membersId;
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public String getPinId() {
         return pinId;
     }
 
+    public void setPinId(String pinId) {
+        this.pinId = pinId;
+    }
+
+    public String getChat() {
+        return chat;
+    }
+
+    public void setChat(String chat) {
+        this.chat = chat;
+    }
+
     public String getName() {
         return name;
     }
 
-    public int getCountOfMembers() {
-        return countOfMembers;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getMessageId() {
-        return messageId;
+    public String getChatType() {
+        return chatType;
+    }
+
+    public void setChatType(String chatType) {
+        this.chatType = chatType;
     }
 }
