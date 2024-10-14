@@ -17,6 +17,7 @@ public class UserRepository extends BaseRepository<User> {
         super(dataSource);
     }
 
+
     @Override
     protected String getTableName() {
         return "users";

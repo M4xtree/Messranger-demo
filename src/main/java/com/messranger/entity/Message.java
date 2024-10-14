@@ -4,56 +4,79 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class Message extends  Identifier{
+public class Message extends Identifier {
     private String chatId;
-    private String messageText;
+    private String senderId;
+    private String content;
+    private LocalDate createdAt;
+    private boolean isDeleted;
+    private boolean isRead;
+    private LocalDate editedAt;
 
-    private LocalDate date = LocalDate.now();
-    private LocalTime time = LocalTime.now();
 
-    private boolean isPinned;
-
-    public Message(String chatId, String messageText, LocalDate date, LocalTime time, boolean isPinned) {
+    public Message(String chatId, String senderId, String content, LocalDate createdAt, boolean isDeleted, boolean isRead, LocalDate editedAt) {
         this.chatId = chatId;
-        this.messageText = messageText;
-        this.date = date;
-        this.time = time;
-        this.isPinned = isPinned;
+        this.senderId = senderId;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.isDeleted = isDeleted;
+        this.isRead = isRead;
+        this.editedAt = editedAt;
     }
 
     public String getChatId() {
         return chatId;
     }
 
-    public String getMessageText() {
-        return messageText;
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
     }
 
-    public void setMessageText(String messageText) {
-        this.messageText = messageText;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public String getContent() {
+        return content;
     }
 
-    public boolean isPinned() {
-        return isPinned;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public void setPinned(boolean pinned) {
-        isPinned = pinned;
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 
-    public LocalTime getTime() {
-        return time;
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public void setTime(LocalTime time) {
-        this.time = time;
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean isRead) {
+        this.isRead = isRead;
+    }
+
+    public LocalDate getEditedAt() {
+        return editedAt;
+    }
+
+    public void setEditedAt(LocalDate editedAt) {
+        this.editedAt = editedAt;
     }
 }

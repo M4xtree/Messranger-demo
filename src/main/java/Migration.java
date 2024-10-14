@@ -34,19 +34,7 @@ public class Migration {
             allUsers.forEach(id -> dbConfig.getLogger().info("User: "+ id.getNickname()));
             selectedUsers.forEach(id -> dbConfig.getLogger().info("User: " + id.getPhoneNumber() + " " + id.getNickname()));
 
-            Chat chat = new Chat(user.getId(),"asas", "asdasd", "asdasdasd","test", "P");
 
-            chatRepository.save(chat);
-            Optional<Chat> foundChat = chatRepository.find(chat.getId());
-            foundChat.isPresent();
-            PageRequest pageRequest1 = new PageRequest(10, 0L, List.of("name ASC"));
-            List<Chat> allChats = chatRepository.findAll(pageRequest1);
-            List<Chat> selectedChats = chatRepository.findAll(pageRequest1, chat);
-            allChats.forEach(id -> dbConfig.getLogger().info("chat: " + id.getName()));
-            selectedChats.forEach(id-> dbConfig.getLogger().info("chat: " + id.getId() + " with name: " + id.getName()));
-
-            Message message = new Message(chat.getId(), "HELLO JORA", LocalDate.now(), LocalTime.now(), true);
-            messageRepository.save(message);
             //messageRepository.delete(message.getId());
             //Thread.sleep(100000);
         } finally {
