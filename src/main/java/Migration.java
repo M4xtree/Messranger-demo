@@ -1,15 +1,10 @@
 import com.messranger.config.DataBaseConfig;
 import com.messranger.entity.*;
-import com.messranger.managers.*;
 import com.messranger.managers.model.PageRequest;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import org.flywaydb.core.Flyway;
+import com.messranger.managers.repositories.ChatRepository;
+import com.messranger.managers.repositories.MessageRepository;
+import com.messranger.managers.repositories.UserRepository;
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 

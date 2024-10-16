@@ -1,6 +1,5 @@
-package com.messranger.managers;
+package com.messranger.managers.repositories;
 
-import com.messranger.entity.Identifier;
 import com.messranger.managers.model.PageRequest;
 
 import java.util.List;

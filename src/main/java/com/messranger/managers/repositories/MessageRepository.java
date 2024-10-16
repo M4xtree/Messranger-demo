@@ -1,8 +1,7 @@
-package com.messranger.managers;
+package com.messranger.managers.repositories;
 
 import com.messranger.entity.Message;
 import com.messranger.managers.model.FilterColumn;
-import com.messranger.managers.model.PageRequest;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
@@ -37,18 +36,6 @@ public class MessageRepository extends BaseRepository<Message> {
     }
 
     @Override
-    protected String[] getFilterColumns(Message filter) {
-        List<String> filterColumns = new ArrayList<>();
-        if (filter.getChatId() != null) {
-            filterColumns.add("chat_id");
-        }
-        if (filter.getSenderId() != null) {
-            filterColumns.add("sender_id");
-        }
-        return filterColumns.toArray(new String[0]);
-    }
-
-    @Override
     protected List<FilterColumn<?>> toFilterColumns(Message filter) {
         List<FilterColumn<?>> result = new ArrayList<>();
         Optional.ofNullable(filter.getChatId())
@@ -56,18 +43,6 @@ public class MessageRepository extends BaseRepository<Message> {
         Optional.ofNullable(filter.getSenderId())
                 .ifPresent(it -> result.add(new FilterColumn<>("sender_id", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
         return result;
-    }
-
-    @Override
-    protected int prepareFilterStatement(PreparedStatement statement, Message filter) throws SQLException {
-        int index = 1;
-        if (filter.getChatId() != null) {
-            statement.setString(index++, filter.getChatId());
-        }
-        if (filter.getSenderId() != null) {
-            statement.setString(index++, filter.getSenderId());
-        }
-        return index;
     }
 
     @Override
@@ -102,15 +77,6 @@ public class MessageRepository extends BaseRepository<Message> {
                 resultSet.getBoolean("is_read"),
                 resultSet.getDate("edited_at") != null ? resultSet.getDate("edited_at").toLocalDate() : null
         );
-    }
-
-    @Override
-    protected List<Message> mapResultSetToEntities(ResultSet resultSet) throws SQLException {
-        List<Message> messages = new ArrayList<>();
-        while (resultSet.next()) {
-            messages.add(mapResultSetToEntity(resultSet));
-        }
-        return messages;
     }
 }
 

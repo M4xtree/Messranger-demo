@@ -1,10 +1,7 @@
-package com.messranger.managers;
+package com.messranger.managers.repositories;
 
 import com.messranger.entity.User;
 import com.messranger.managers.model.FilterColumn;
-import com.messranger.managers.model.PageRequest;
-import com.messranger.managers.model.SafeBiConsumer;
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
@@ -39,21 +36,6 @@ public class UserRepository extends BaseRepository<User> {
     }
 
     @Override
-    protected String[] getFilterColumns(User filter) {
-        List<String> filterColumns = new ArrayList<>();
-        if (filter.getId() != null) {
-            filterColumns.add("id");
-        }
-        if (filter.getNickname() != null) {
-            filterColumns.add("nickname");
-        }
-        if (filter.getPhoneNumber() != null) {
-            filterColumns.add("phone_number");
-        }
-        return filterColumns.toArray(new String[filterColumns.size()]);
-    }
-
-    @Override
     protected List<FilterColumn<?>> toFilterColumns(User filter) {
         List<FilterColumn<?>> result = new ArrayList<>();
         Optional.ofNullable(filter.getId())
@@ -63,21 +45,6 @@ public class UserRepository extends BaseRepository<User> {
         Optional.ofNullable(filter.getPhoneNumber())
                 .ifPresent(it -> result.add(new FilterColumn<>("phone_number", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
         return result;
-    }
-
-    @Override
-    protected int prepareFilterStatement(PreparedStatement statement, User filter) throws SQLException {
-        int index = 1;
-        if (filter.getId() != null) {
-            statement.setString(index++, filter.getId());
-        }
-        if (filter.getNickname() != null) {
-            statement.setString(index++, filter.getNickname());
-        }
-        if (filter.getPhoneNumber() != null) {
-            statement.setString(index++, filter.getPhoneNumber());
-        }
-        return index;
     }
 
     @Override
@@ -99,15 +66,6 @@ public class UserRepository extends BaseRepository<User> {
         String nickname = resultSet.getString("nickname");
         String phoneNumber = resultSet.getString("phone_number");
         return new User(nickname, phoneNumber);
-    }
-
-    @Override
-    protected List<User> mapResultSetToEntities(ResultSet resultSet) throws SQLException {
-        List<User> users = new ArrayList<>();
-        while (resultSet.next()) {
-            users.add(mapResultSetToEntity(resultSet));
-        }
-        return users;
     }
 }
 

@@ -1,10 +1,7 @@
-package com.messranger.managers;
+package com.messranger.managers.repositories;
 
 import com.messranger.entity.Members;
 import com.messranger.managers.model.FilterColumn;
-import com.messranger.managers.model.PageRequest;
-import com.messranger.managers.model.SafeBiConsumer;
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
@@ -25,7 +22,7 @@ public class MembersRepository extends BaseRepository<Members> {
 
     @Override
     protected String getIdColumn() {
-        return "user_id";
+        return "user_id" + "chat_id";
     }
 
     @Override
@@ -39,18 +36,6 @@ public class MembersRepository extends BaseRepository<Members> {
     }
 
     @Override
-    protected String[] getFilterColumns(Members filter) {
-        List<String> filterColumns = new ArrayList<>();
-        if (filter.getChatId() != null) {
-            filterColumns.add("chat_id");
-        }
-        if (filter.getUserId() != null) {
-            filterColumns.add("user_id");
-        }
-        return filterColumns.toArray(new String[0]);
-    }
-
-    @Override
     protected List<FilterColumn<?>> toFilterColumns(Members filter) {
         List<FilterColumn<?>> result = new ArrayList<>();
         Optional.ofNullable(filter.getChatId())
@@ -58,18 +43,6 @@ public class MembersRepository extends BaseRepository<Members> {
         Optional.ofNullable(filter.getUserId())
                 .ifPresent(it -> result.add(new FilterColumn<>("user_id", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
         return result;
-    }
-
-    @Override
-    protected int prepareFilterStatement(PreparedStatement statement, Members filter) throws SQLException {
-        int index = 1;
-        if (filter.getChatId() != null) {
-            statement.setString(index++, filter.getChatId());
-        }
-        if (filter.getUserId() != null) {
-            statement.setString(index++, filter.getUserId());
-        }
-        return index;
     }
 
     @Override
@@ -108,14 +81,4 @@ public class MembersRepository extends BaseRepository<Members> {
                 resultSet.getDate("joined_at").toLocalDate()
         );
     }
-
-    @Override
-    protected List<Members> mapResultSetToEntities(ResultSet resultSet) throws SQLException {
-        List<Members> members = new ArrayList<>();
-        while (resultSet.next()) {
-            members.add(mapResultSetToEntity(resultSet));
-        }
-        return members;
-    }
-
 }

@@ -1,10 +1,7 @@
-package com.messranger.managers;
+package com.messranger.managers.repositories;
 
 import com.messranger.entity.Chat;
-import com.messranger.entity.User;
 import com.messranger.managers.model.FilterColumn;
-import com.messranger.managers.model.PageRequest;
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
@@ -38,27 +35,6 @@ public class ChatRepository extends BaseRepository<Chat> {
     }
 
     @Override
-    protected String[] getFilterColumns(Chat filter) {
-        List<String> filterColumns = new ArrayList<>();
-        if (filter.getId() != null) {
-            filterColumns.add("id");
-        }
-        if (filter.getType() != null) {
-            filterColumns.add("type");
-        }
-        if (filter.getCreatedBy() != null) {
-            filterColumns.add("created_by");
-        }
-        if (filter.getName() != null) {
-            filterColumns.add("name");
-        }
-        if (filter.getDescription() != null) {
-            filterColumns.add("description");
-        }
-        return filterColumns.toArray(new String[0]);
-    }
-
-    @Override
     protected List<FilterColumn<?>> toFilterColumns(Chat filter) {
         List<FilterColumn<?>> result = new ArrayList<>();
         Optional.ofNullable(filter.getId())
@@ -71,24 +47,6 @@ public class ChatRepository extends BaseRepository<Chat> {
         Optional.ofNullable(filter.getName())
                 .ifPresent(it -> result.add(new FilterColumn<>("name", "LIKE", "%" + it + "%", (stmt, idx) -> stmt.setString(idx, "%" + it + "%"))));
         return result;
-    }
-
-    @Override
-    protected int prepareFilterStatement(PreparedStatement statement, Chat filter) throws SQLException {
-        int index = 1;
-        if (filter.getId() != null) {
-            statement.setString(index++, filter.getId());
-        }
-        if (filter.getType() != null) {
-            statement.setString(index++, filter.getType());
-        }
-        if (filter.getCreatedBy() != null) {
-            statement.setString(index++, filter.getCreatedBy());
-        }
-        if (filter.getName() != null) {
-            statement.setString(index++, filter.getName());
-        }
-        return index;
     }
 
     @Override
@@ -122,14 +80,5 @@ public class ChatRepository extends BaseRepository<Chat> {
                 resultSet.getBoolean("is_private"),
                 resultSet.getTimestamp("created_at").toLocalDateTime()
         );
-    }
-
-    @Override
-    protected List<Chat> mapResultSetToEntities(ResultSet resultSet) throws SQLException {
-        List<Chat> chats = new ArrayList<>();
-        while (resultSet.next()) {
-            chats.add(mapResultSetToEntity(resultSet));
-        }
-        return chats;
     }
 }
