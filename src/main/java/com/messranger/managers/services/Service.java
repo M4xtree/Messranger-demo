@@ -6,13 +6,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface Service<T> {
-    T create(T instance);
-
-    T update(String id, T instance);
-
-    Optional<T> getById(String id);
-
-    List<T> getAll(PageRequest pageRequest);
-
+    T save(T instance);
+    T update(T instance);
+    Optional<T> find(String id);
     void delete(String id);
+    List<T> findAll(PageRequest pageRequest);
+    List<T> findAll(PageRequest pageRequest, T filter);
 }
