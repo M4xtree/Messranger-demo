@@ -1,7 +1,6 @@
-package com.messranger.managers.model;
+package com.messranger.model;
 
 import java.sql.PreparedStatement;
-import java.util.function.BiConsumer;
 
 public class FilterColumn<T> {
 

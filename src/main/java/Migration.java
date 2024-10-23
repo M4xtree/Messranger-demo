@@ -1,38 +1,39 @@
 import com.messranger.config.DataBaseConfig;
 import com.messranger.entity.*;
-import com.messranger.managers.controllers.UserController;
-import com.messranger.managers.model.PageRequest;
-import com.messranger.managers.repositories.ChatRepository;
-import com.messranger.managers.repositories.MessageRepository;
-import com.messranger.managers.repositories.UserRepository;
-import com.messranger.managers.services.UserService;
+import com.messranger.model.PageRequest;
+import com.messranger.repositories.ChatRepository;
+import com.messranger.repositories.MessageRepository;
+import com.messranger.repositories.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public class Migration {
-    public static void main(String[] args) throws InterruptedException {
-
+    public static void main(String[] args) throws InterruptedException{
         DataBaseConfig dbConfig = new DataBaseConfig();
 
-        UserRepository userRepository = new UserRepository(dbConfig.getDataSource());
-        UserService userService = new UserService(userRepository);
+        UserRepository repository = new UserRepository(dbConfig.getDataSource());
+        ChatRepository chatRepository = new ChatRepository(dbConfig.getDataSource());
+        MessageRepository messageRepository = new MessageRepository(dbConfig.getDataSource());
 
-        UserController userController = new UserController(userService);
+        try {
+            User user = new User("Maxtree", "+375291194560");
+            repository.save(user);
+            user.setNickname("M4xtree");
+            repository.update(user);
+            Optional<User> foundUser = repository.find(user.getId());
+            foundUser.isPresent();
+            PageRequest pageRequest = new PageRequest(10, 0L, List.of("nickname ASC"));
+            List<User> allUsers = repository.findAll(pageRequest);
+            List<User> selectedUsers = repository.findAll(pageRequest, user);
+            allUsers.forEach(id -> dbConfig.getLogger().info("User: "+ id.getNickname()));
+            selectedUsers.forEach(id -> dbConfig.getLogger().info("User: " + id.getPhoneNumber() + " " + id.getNickname()));
 
-        User newUser = userController.createUser("JohnDoe", "+123456789");
-        System.out.println("User created: " + newUser.getNickname());
 
-        newUser = userController.updateUser(newUser.getId(), "JohnnyDoe", "+987654321");
-        System.out.println("User updated: " + newUser.getNickname());
-
-        Optional<User> user = userController.getUserById(newUser.getId());
-        user.ifPresent(u -> System.out.println("User found: " + u.getNickname()));
-
-        List<User> users = userController.getAllUsers(10, 0);
-        users.forEach(u -> System.out.println("User: " + u.getNickname()));
-
-        userController.deleteUser(newUser.getId());
-        System.out.println("User deleted");
+            //messageRepository.delete(message.getId());
+            //Thread.sleep(100000);
+        } finally {
+            dbConfig.close();
+        }
     }
 }

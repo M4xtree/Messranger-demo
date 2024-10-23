@@ -1,4 +1,4 @@
-package com.messranger.managers.constants;
+package com.messranger.constants;
 
 public class SqlConstants {
     public static final String DELIMITER = ", ";

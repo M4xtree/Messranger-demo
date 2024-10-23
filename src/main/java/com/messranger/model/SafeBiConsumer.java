@@ -1,4 +1,4 @@
-package com.messranger.managers.model;
+package com.messranger.model;
 
 @FunctionalInterface
 public interface SafeBiConsumer<T, U> {

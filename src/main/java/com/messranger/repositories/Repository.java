@@ -1,6 +1,6 @@
-package com.messranger.managers.repositories;
+package com.messranger.repositories;
 
-import com.messranger.managers.model.PageRequest;
+import com.messranger.model.PageRequest;
 
 import java.util.List;
 import java.util.Optional;

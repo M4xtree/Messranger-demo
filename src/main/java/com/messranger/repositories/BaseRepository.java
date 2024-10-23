@@ -1,8 +1,8 @@
-package com.messranger.managers.repositories;
+package com.messranger.repositories;
 
-import com.messranger.managers.constants.SqlConstants;
-import com.messranger.managers.model.FilterColumn;
-import com.messranger.managers.model.PageRequest;
+import com.messranger.constants.SqlConstants;
+import com.messranger.model.FilterColumn;
+import com.messranger.model.PageRequest;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

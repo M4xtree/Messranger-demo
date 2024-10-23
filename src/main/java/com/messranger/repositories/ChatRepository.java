@@ -1,7 +1,7 @@
-package com.messranger.managers.repositories;
+package com.messranger.repositories;
 
 import com.messranger.entity.Chat;
-import com.messranger.managers.model.FilterColumn;
+import com.messranger.model.FilterColumn;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
