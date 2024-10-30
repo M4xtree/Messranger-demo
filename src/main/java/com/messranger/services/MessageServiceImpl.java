@@ -11,13 +11,11 @@ import java.util.Optional;
 
 public class MessageServiceImpl implements MessageService{
     private final MessageRepository repository;
-    private PageRequest pageRequest;
 
     private static final DataBaseConfig dbConfig = new DataBaseConfig();
 
     public MessageServiceImpl() {
         repository = new MessageRepository(dbConfig.getDataSource());
-        pageRequest = new PageRequest(10, 0L, List.of("nickname ASC"));
     }
 
     @Override
@@ -34,6 +32,7 @@ public class MessageServiceImpl implements MessageService{
             message.setContent(content);
             message.setDeleted(isDeleted);
             message.setRead(isRead);
+            message.setEditedAt(LocalDate.now());
             return repository.update(message);
         }
         return null;
@@ -50,22 +49,15 @@ public class MessageServiceImpl implements MessageService{
     }
 
     @Override
-    public List<Message> getAll() {
+    public List<Message> getAll(Integer limit, Long offset) {
+        PageRequest pageRequest = new PageRequest(limit, offset, List.of("content ASC"));
         return repository.findAll(pageRequest);
     }
 
     @Override
-    public List<Message> search(String chatId) {
+    public List<Message> search(String chatId, Integer limit, Long offset) {
         Message filter = new Message(chatId, null, null, LocalDate.now(), false, false, null);
+        PageRequest pageRequest = new PageRequest(limit, offset, List.of("content ASC"));
         return repository.findAll(pageRequest, filter);
-    }
-
-
-    public PageRequest getPageRequest() {
-        return pageRequest;
-    }
-
-    public void setPageRequest(PageRequest pageRequest) {
-        this.pageRequest = pageRequest;
     }
 }

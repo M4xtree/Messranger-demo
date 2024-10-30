@@ -10,6 +10,6 @@ public interface UserService {
     User update(String id,String nickname, String phoneNumber);
     Optional<User> getById(String id);
     void delete(String id);
-    List<User> getAll();
-    List<User> search(String nicknameFilter, String phoneNumberFilter);
+    List<User> getAll(Integer limit, Long offset);
+    List<User> search(String nicknameFilter, String phoneNumberFilter, Integer limit, Long offset);
 }

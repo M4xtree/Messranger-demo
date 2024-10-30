@@ -10,13 +10,11 @@ import java.util.Optional;
 
 public class UserServiceImpl implements UserService{
     private final UserRepository repository;
-    private PageRequest pageRequest;
 
     private static final DataBaseConfig dbConfig = new DataBaseConfig();
 
     public UserServiceImpl() {
         repository = new UserRepository(dbConfig.getDataSource());
-        pageRequest = new PageRequest(10, 0L, List.of("nickname ASC"));
     }
 
     @Override
@@ -48,21 +46,15 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<User> getAll() {
+    public List<User> getAll(Integer limit, Long offset) {
+        PageRequest pageRequest = new PageRequest(limit, offset, List.of("nickname ASC"));
         return repository.findAll(pageRequest);
     }
 
     @Override
-    public List<User> search(String nicknameFilter, String phoneNumberFilter) {
+    public List<User> search(String nicknameFilter, String phoneNumberFilter, Integer limit, Long offset) {
         User filter = new User(nicknameFilter, phoneNumberFilter);
+        PageRequest pageRequest = new PageRequest(limit, offset, List.of("nickname ASC"));
         return repository.findAll(pageRequest, filter);
-    }
-
-    public PageRequest getPageRequest() {
-        return pageRequest;
-    }
-
-    public void setPageRequest(PageRequest pageRequest) {
-        this.pageRequest = pageRequest;
     }
 }

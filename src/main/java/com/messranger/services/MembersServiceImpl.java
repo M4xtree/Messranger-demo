@@ -10,13 +10,11 @@ import java.util.Optional;
 
 public class MembersServiceImpl implements MembersService{
     private final MembersRepository repository;
-    private PageRequest pageRequest;
 
     private static final DataBaseConfig dbConfig = new DataBaseConfig();
 
     public MembersServiceImpl() {
         repository = new MembersRepository(dbConfig.getDataSource());
-        pageRequest = new PageRequest(10, 0L, List.of("nickname ASC"));
     }
 
     @Override
@@ -48,20 +46,15 @@ public class MembersServiceImpl implements MembersService{
     }
 
     @Override
-    public List<Members> getAll() {
+    public List<Members> getAll(Integer limit, Long offset) {
+        PageRequest pageRequest = new PageRequest(limit, offset, List.of("role ASC"));
         return repository.findAll(pageRequest);
     }
 
     @Override
-    public List<Members> search() {
-        Members filter = new Members(null, null, "", false, false, false, "", null);
+    public List<Members> search(String chatId, String userId, Integer limit, Long offset) {
+        Members filter = new Members(chatId, userId, "", false, false, false, "", null);
+        PageRequest pageRequest = new PageRequest(limit, offset, List.of("role ASC"));
         return repository.findAll(pageRequest, filter);
-    }
-    public PageRequest getPageRequest() {
-        return pageRequest;
-    }
-
-    public void setPageRequest(PageRequest pageRequest) {
-        this.pageRequest = pageRequest;
     }
 }

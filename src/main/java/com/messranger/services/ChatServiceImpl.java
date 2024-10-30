@@ -2,59 +2,54 @@ package com.messranger.services;
 
 import com.messranger.config.DataBaseConfig;
 import com.messranger.entity.Chat;
+import com.messranger.entity.User;
 import com.messranger.model.PageRequest;
 import com.messranger.repositories.ChatRepository;
+import com.messranger.repositories.MembersRepository;
+import com.messranger.repositories.MessageRepository;
+import com.messranger.repositories.UserRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public class ChatServiceImpl implements ChatService{
     private final ChatRepository repository;
-    private PageRequest pageRequest;
+    private final UserRepository userRepository;
 
     private static final DataBaseConfig dbConfig = new DataBaseConfig();
 
     public ChatServiceImpl() {
-        repository = new ChatRepository(dbConfig.getDataSource());
-        pageRequest = new PageRequest(10, 0L, List.of("nickname ASC"));
+        this.userRepository = new UserRepository(dbConfig.getDataSource());
+        this.repository = new ChatRepository(dbConfig.getDataSource());
     }
 
     @Override
-    public Chat create(String type, String createdBy, String name, String description, boolean isPrivate, List<Integer> participantIds) {
-        if (!type.equals("p2p") && !type.equals("group") && !type.equals("channel")) {
-            throw new IllegalArgumentException("Invalid chat type");
-        }
-
-        Chat chat = new Chat(type, createdBy, null, null, isPrivate, null);
-
-        if (type.equals("p2p")) {
-            if (participantIds == null || participantIds.size() != 1) {
-                throw new IllegalArgumentException("p2p chat requires exactly one participant");
-            }
-            chat.setName(null);
-            chat.setDescription(null);
-            Chat savedChat = repository.save(chat);
-            return savedChat;
-        }
-
-        if (type.equals("group") || type.equals("channel")) {
-            if (name == null || name.isBlank()) {
-                throw new IllegalArgumentException(type + " chat requires a name");
-            }
-            chat.setName(name);
-            chat.setDescription(description);
-
-            Chat savedChat = repository.save(chat);
-
-
-
-            if (participantIds != null && !participantIds.isEmpty()) {
-                for (Integer participantId : participantIds) {
+    public Chat create(String type, String createdBy, String name, String description, boolean isPrivate) {
+        Optional<User> creator = userRepository.find(createdBy);
+        switch (type){
+            case "p2p":
+                if(creator.isPresent()) {
+                    Chat chat = new Chat(type, creator.get().getId(), null, null, isPrivate, LocalDateTime.now());
+                    return repository.save(chat);
                 }
-            }
-            return savedChat;
+                break;
+            case "group":
+                if(creator.isPresent()){
+                    Chat chat = new Chat(type, creator.get().getId(), name, description, isPrivate, LocalDateTime.now());
+                    return repository.save(chat);
+                }
+                break;
+            case "channel":
+                if(creator.isPresent()){
+                    Chat chat = new Chat(type, creator.get().getId(), name, description, isPrivate, LocalDateTime.now());
+                    return repository.save(chat);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid chat type");
         }
-
         return null;
     }
 
@@ -83,13 +78,15 @@ public class ChatServiceImpl implements ChatService{
     }
 
     @Override
-    public List<Chat> getAll() {
+    public List<Chat> getAll(Integer limit, Long offset) {
+        PageRequest pageRequest = new PageRequest(limit, offset, List.of("name"));
         return repository.findAll(pageRequest);
     }
 
     @Override
-    public List<Chat> searchChats(String nameFilter) {
+    public List<Chat> searchChats(String nameFilter, Integer limit, Long offset) {
         Chat filter = new Chat(null, "", nameFilter, null, false, null);
+        PageRequest pageRequest = new PageRequest(limit, offset, List.of("name"));
         return repository.findAll(pageRequest, filter);
     }
 }

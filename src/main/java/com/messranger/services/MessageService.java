@@ -10,6 +10,6 @@ public interface MessageService {
     Message update(String id, String content, boolean isDeleted, boolean isRead);
     Optional<Message> getById(String id);
     void delete(String id);
-    List<Message> getAll();
-    List<Message> search(String chatId);
+    List<Message> getAll(Integer limit, Long offset);
+    List<Message> search(String chatId,Integer limit, Long offset);
 }

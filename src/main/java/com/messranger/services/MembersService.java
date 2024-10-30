@@ -10,6 +10,6 @@ public interface MembersService {
     Members update(String chatId, String userId, String role);
     Optional<Members> get(String chatId, String userId);
     void remove(String chatId, String userId);
-    List<Members> getAll();
-    List<Members> search();
+    List<Members> getAll(Integer limit, Long offset);
+    List<Members> search(String chatId, String userId, Integer limit, Long offset);
 }
