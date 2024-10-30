@@ -25,9 +25,8 @@ public class BaseService<T> implements Service<T>{
 
     @Override
     public Optional<T> find(String id) {
-        if(repository.find(id).isPresent())
-            return repository.find(id);
-        return Optional.empty();
+        return repository.find(id);
+
     }
 
     @Override

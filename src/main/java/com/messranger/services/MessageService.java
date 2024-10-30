@@ -14,15 +14,11 @@ public class MessageService extends BaseService<Message> {
 
     @Override
     public Message update(Message instance){
-        Optional<Message> existingMessage = repository.find(instance.getId());
-        if(existingMessage.isPresent()) {
-            Message message = existingMessage.get();
-            message.setContent(instance.getContent());
-            message.setDeleted(instance.isDeleted());
-            message.setRead(instance.isRead());
-            message.setEditedAt(LocalDateTime.now());
-            return repository.update(message);
-        }
-        return null;
+        Message message = repository.find(instance.getId()).get();
+        message.setContent(instance.getContent());
+        message.setDeleted(instance.isDeleted());
+        message.setRead(instance.isRead());
+        message.setEditedAt(LocalDateTime.now());
+        return repository.update(message);
     }
 }

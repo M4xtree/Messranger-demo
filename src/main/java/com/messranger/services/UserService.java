@@ -14,13 +14,9 @@ public class UserService extends BaseService<User>{
 
     @Override
     public User update(User instance) {
-        Optional<User> existingUser = repository.find(instance.getId());
-        if(existingUser.isPresent()) {
-            User repUser = existingUser.get();
-            repUser.setNickname(instance.getNickname());
-            repUser.setPhoneNumber(instance.getPhoneNumber());
-            return repository.update(repUser);
-        }
-        return null;
+        User repUser = repository.find(instance.getId()).get();
+        repUser.setNickname(instance.getNickname());
+        repUser.setPhoneNumber(instance.getPhoneNumber());
+        return repository.update(repUser);
     }
 }
