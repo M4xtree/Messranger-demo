@@ -17,4 +17,6 @@ public interface Service<T> {
     List<T> findAll(PageRequest pageRequest);
 
     List<T> findAll(PageRequest pageRequest, T filter);
+
+    T get(String id);
 }
