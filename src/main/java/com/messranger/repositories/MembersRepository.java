@@ -27,12 +27,12 @@ public class MembersRepository extends BaseRepository<Members> {
 
     @Override
     protected String[] getColumnNames() {
-        return new String[]{"chat_id", "role", "can_delete_messages", "can_add_participants", "can_edit_messages", "caret", "joined_at"};
+        return new String[]{"role", "can_delete_messages", "can_add_participants", "can_edit_messages", "caret", "joined_at"};
     }
 
     @Override
     protected String[] getColumnPlaceholders() {
-        return new String[]{"?", "?", "?", "?", "?", "?", "?"};
+        return new String[]{"?", "?", "?", "?", "?", "?"};
     }
 
     @Override
@@ -54,7 +54,7 @@ public class MembersRepository extends BaseRepository<Members> {
         statement.setBoolean(5, member.isCanAddParticipants());
         statement.setBoolean(6, member.isCanEditMessages());
         statement.setString(7, member.getCaret());
-        statement.setDate(8, Date.valueOf(member.getJoinedAt()));
+        statement.setTimestamp(8, Timestamp.valueOf(member.getJoinedAt()));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class MembersRepository extends BaseRepository<Members> {
                 resultSet.getBoolean("can_add_participants"),
                 resultSet.getBoolean("can_edit_messages"),
                 resultSet.getString("caret"),
-                resultSet.getDate("joined_at").toLocalDate()
+                resultSet.getTimestamp("joined_at").toLocalDateTime()
         );
     }
 }

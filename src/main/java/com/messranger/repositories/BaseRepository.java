@@ -202,5 +202,22 @@ public abstract class BaseRepository<T> implements Repository<T> {
         return entities;
     }
 
+    public Optional<T> find(String firstId, String secondId) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(selectByIdSql)) {
+
+            statement.setString(1, firstId);
+            statement.setString(2, secondId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(mapResultSetToEntity(resultSet));
+            }
+        } catch (SQLException e) {
+            LOGGER.error(e.toString());
+            throw new RuntimeException("Error while finding instance", e);
+        }
+        return Optional.empty();
+    }
+
 
 }

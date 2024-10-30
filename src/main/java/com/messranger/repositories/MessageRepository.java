@@ -51,10 +51,10 @@ public class MessageRepository extends BaseRepository<Message> {
         statement.setString(2, message.getChatId());
         statement.setString(3, message.getSenderId());
         statement.setString(4, message.getContent());
-        statement.setDate(5, Date.valueOf(message.getCreatedAt()));
+        statement.setTimestamp(5, Timestamp.valueOf(message.getCreatedAt()));
         statement.setBoolean(6, message.isDeleted());
         statement.setBoolean(7, message.isRead());
-        statement.setDate(8, message.getEditedAt() != null ? Date.valueOf(message.getEditedAt()) : null);
+        statement.setTimestamp(8, message.getEditedAt() != null ? Timestamp.valueOf(message.getEditedAt()) : null);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class MessageRepository extends BaseRepository<Message> {
         statement.setString(1, message.getContent());
         statement.setBoolean(2, message.isDeleted());
         statement.setBoolean(3, message.isRead());
-        statement.setDate(4, message.getEditedAt() != null ? Date.valueOf(message.getEditedAt()) : null);
+        statement.setTimestamp(4, message.getEditedAt() != null ? Timestamp.valueOf(message.getEditedAt()) : null);
         statement.setString(5, message.getId());
     }
 
@@ -72,10 +72,10 @@ public class MessageRepository extends BaseRepository<Message> {
                 resultSet.getString("chat_id"),
                 resultSet.getString("sender_id"),
                 resultSet.getString("content"),
-                resultSet.getDate("created_at").toLocalDate(),
+                resultSet.getTimestamp("created_at").toLocalDateTime(),
                 resultSet.getBoolean("is_deleted"),
                 resultSet.getBoolean("is_read"),
-                resultSet.getDate("edited_at") != null ? resultSet.getDate("edited_at").toLocalDate() : null
+                resultSet.getTimestamp("edited_at").toLocalDateTime() != null ? resultSet.getTimestamp("edited_at").toLocalDateTime() : null
         );
     }
 }

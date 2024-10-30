@@ -8,13 +8,13 @@ public class Message extends Identifier {
     private String chatId;
     private String senderId;
     private String content;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     private boolean isDeleted;
     private boolean isRead;
-    private LocalDate editedAt;
+    private LocalDateTime editedAt;
 
 
-    public Message(String chatId, String senderId, String content, LocalDate createdAt, boolean isDeleted, boolean isRead, LocalDate editedAt) {
+    public Message(String chatId, String senderId, String content, LocalDateTime createdAt, boolean isDeleted, boolean isRead, LocalDateTime editedAt) {
         this.chatId = chatId;
         this.senderId = senderId;
         this.content = content;
@@ -48,11 +48,11 @@ public class Message extends Identifier {
         this.content = content;
     }
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -72,11 +72,11 @@ public class Message extends Identifier {
         this.isRead = isRead;
     }
 
-    public LocalDate getEditedAt() {
+    public LocalDateTime getEditedAt() {
         return editedAt;
     }
 
-    public void setEditedAt(LocalDate editedAt) {
+    public void setEditedAt(LocalDateTime editedAt) {
         this.editedAt = editedAt;
     }
 }

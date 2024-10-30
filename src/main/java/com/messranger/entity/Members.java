@@ -1,6 +1,7 @@
 package com.messranger.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Members {
     private String chatId;
@@ -10,10 +11,10 @@ public class Members {
     private boolean canAddParticipants;
     private boolean canEditMessages;
     private String caret;
-    private LocalDate joinedAt;
+    private LocalDateTime joinedAt;
 
     public Members(String chatId, String userId, String role, boolean canDeleteMessages,
-                   boolean canAddParticipants, boolean canEditMessages, String caret, LocalDate joinedAt) {
+                   boolean canAddParticipants, boolean canEditMessages, String caret, LocalDateTime joinedAt) {
         this.chatId = chatId;
         this.userId = userId;
         this.role = role;
@@ -80,11 +81,11 @@ public class Members {
         this.caret = caret;
     }
 
-    public LocalDate getJoinedAt() {
+    public LocalDateTime getJoinedAt() {
         return joinedAt;
     }
 
-    public void setJoinedAt(LocalDate joinedAt) {
+    public void setJoinedAt(LocalDateTime joinedAt) {
         this.joinedAt = joinedAt;
     }
 }

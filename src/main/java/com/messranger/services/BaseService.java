@@ -6,9 +6,7 @@ import com.messranger.model.PageRequest;
 import com.messranger.repositories.BaseRepository;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Stack;
 
 public class BaseService<T> implements Service<T>{
     protected BaseRepository<T> repository;
@@ -46,11 +44,5 @@ public class BaseService<T> implements Service<T>{
     public List<T> findAll(PageRequest pageRequest, T filter) {
         return repository.findAll(pageRequest,filter);
     }
-    @Override
-    public T get(String id) {
-        if (repository.find(id).isPresent()) {
-            return repository.find(id).get();
-        }
-        throw new NoSuchElementException();
-    }
+
 }
