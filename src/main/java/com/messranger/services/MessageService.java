@@ -1,15 +1,28 @@
 package com.messranger.services;
 
 import com.messranger.entity.Message;
+import com.messranger.repositories.MessageRepository;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
-public interface MessageService {
-    Message send(String chatId, String senderId, String content);
-    Message update(String id, String content, boolean isDeleted, boolean isRead);
-    Optional<Message> getById(String id);
-    void delete(String id);
-    List<Message> getAll(Integer limit, Long offset);
-    List<Message> search(String chatId,Integer limit, Long offset);
+
+public class MessageService extends BaseService<Message> {
+    public MessageService() {
+        repository = new MessageRepository(dbConfig.getDataSource());
+    }
+
+    @Override
+    public Message update(Message instance){
+        Optional<Message> existingMessage = repository.find(instance.getId());
+        if(existingMessage.isPresent()) {
+            Message message = existingMessage.get();
+            message.setContent(instance.getContent());
+            message.setDeleted(instance.isDeleted());
+            message.setRead(instance.isRead());
+            message.setEditedAt(LocalDateTime.now());
+            return repository.update(message);
+        }
+        return null;
+    }
 }

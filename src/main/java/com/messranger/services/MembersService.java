@@ -1,15 +1,31 @@
 package com.messranger.services;
 
 import com.messranger.entity.Members;
+import com.messranger.repositories.MembersRepository;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
-public interface MembersService {
-    Members add(String chatId, String userId, String role);
-    Members update(String chatId, String userId, String role);
-    Optional<Members> get(String chatId, String userId);
-    void remove(String chatId, String userId);
-    List<Members> getAll(Integer limit, Long offset);
-    List<Members> search(String chatId, String userId, Integer limit, Long offset);
+public class MembersService extends BaseService<Members>{
+    public MembersService() {
+        repository = new MembersRepository(dbConfig.getDataSource());
+    }
+
+    @Override
+    public Members update(Members instance) {
+        Optional<Members> existingMember = repository.find(instance.getChatId(),instance.getUserId());
+        if(existingMember.isPresent()) {
+            Members member = existingMember.get();
+            member.setChatId(instance.getChatId());
+            member.setUserId(instance.getUserId());
+            member.setRole(instance.getRole());
+            member.setCanDeleteMessages(instance.isCanDeleteMessages());
+            member.setCanAddParticipants(instance.isCanAddParticipants());
+            member.setCanEditMessages(instance.isCanEditMessages());
+            member.setCaret(instance.getCaret());
+            member.setJoinedAt(LocalDateTime.now());
+            return repository.update(member);
+        }
+        return null;
+    }
 }
