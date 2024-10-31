@@ -43,6 +43,7 @@ public class ChatService extends BaseService<Chat>{
     @Override
     public Chat update(Chat instance) {
         Chat chat = repository.find(instance.getId()).orElseThrow();
+        chat.setId(instance.getId());
         chat.setType(instance.getType());
         chat.setCreatedBy(instance.getCreatedBy());
         chat.setName(instance.getName());

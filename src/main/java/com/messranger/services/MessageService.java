@@ -14,6 +14,7 @@ public class MessageService extends BaseService<Message> {
     @Override
     public Message update(Message instance){
         Message message = repository.find(instance.getId()).orElseThrow();
+        message.setId(instance.getId());
         message.setContent(instance.getContent());
         message.setDeleted(instance.isDeleted());
         message.setRead(instance.isRead());
