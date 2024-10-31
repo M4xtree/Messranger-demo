@@ -5,6 +5,7 @@ import com.messranger.repositories.ChatRepository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class ChatService extends BaseService<Chat>{
     public ChatService() {
@@ -41,7 +42,7 @@ public class ChatService extends BaseService<Chat>{
 
     @Override
     public Chat update(Chat instance) {
-        Chat chat = repository.find(instance.getId()).get();
+        Chat chat = repository.find(instance.getId()).orElseThrow();
         chat.setType(instance.getType());
         chat.setCreatedBy(instance.getCreatedBy());
         chat.setName(instance.getName());

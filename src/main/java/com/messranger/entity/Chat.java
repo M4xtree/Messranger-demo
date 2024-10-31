@@ -1,8 +1,7 @@
 package com.messranger.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.UUID;
+
 
 public class Chat extends Identifier {
     private String type;  // 'p2p', 'group', 'channel'

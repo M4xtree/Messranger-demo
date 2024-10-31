@@ -1,6 +1,5 @@
 package com.messranger.services;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import com.messranger.config.DataBaseConfig;
 import com.messranger.model.PageRequest;
 import com.messranger.repositories.BaseRepository;

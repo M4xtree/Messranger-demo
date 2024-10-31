@@ -12,7 +12,7 @@ public class UserService extends BaseService<User>{
 
     @Override
     public User update(User instance) {
-        User repUser = repository.find(instance.getId()).get();
+        User repUser = repository.find(instance.getId()).orElseThrow();
         repUser.setNickname(instance.getNickname());
         repUser.setPhoneNumber(instance.getPhoneNumber());
         return repository.update(repUser);

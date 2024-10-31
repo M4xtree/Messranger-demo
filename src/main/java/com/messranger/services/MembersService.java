@@ -4,7 +4,6 @@ import com.messranger.entity.Members;
 import com.messranger.repositories.MembersRepository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 public class MembersService extends BaseService<Members>{
     public MembersService() {
@@ -13,7 +12,7 @@ public class MembersService extends BaseService<Members>{
 
     @Override
     public Members update(Members instance) {
-        Members member = repository.find(instance.getChatId(),instance.getUserId()).get();
+        Members member = repository.find(instance.getChatId(),instance.getUserId()).orElseThrow();
         member.setChatId(instance.getChatId());
         member.setUserId(instance.getUserId());
         member.setRole(instance.getRole());
