@@ -31,7 +31,7 @@ public class MembersService extends BaseService<Members>{
     @Override
     public Members save(Members instance) {
         LOGGER.info("Adding member to chat with ID: {}", instance.getChatId());
-        if(!repository.find(instance.getChatId(), instance.getUserId()).isEmpty()){
+        if (repository.find(instance.getChatId(), instance.getUserId()).isEmpty()) {
             Members member = new Members(instance.getChatId(), instance.getUserId(), instance.getRole(), false, false, false, null, LocalDateTime.now());
             return repository.save(member);
         }

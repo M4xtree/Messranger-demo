@@ -104,34 +104,39 @@ public class Migration {
             LOGGER.error("Не удалось удалить пользователей.");
         }
 
-        Members member = new Members(chat.getId(), user1.getId(), "admin", true, true, true, null, LocalDateTime.now());
-        member = membersService.save(member);
+        // Проверка наличия чата и пользователя перед добавлением участника
+        if (retrievedChat.isPresent() && retrievedUser1.isPresent()) {
+            Members member = new Members(chat.getId(), user1.getId(), "admin", true, true, true, null, LocalDateTime.now());
+            member = membersService.save(member);
 
-        Optional<Members> retrievedMember = membersService.find(member.getChatId(), member.getUserId());
-        if (retrievedMember.isPresent()) {
-            LOGGER.info("Участник успешно сохранен.");
+            Optional<Members> retrievedMember = membersService.find(member.getChatId(), member.getUserId());
+            if (retrievedMember.isPresent()) {
+                LOGGER.info("Участник успешно сохранен.");
+            } else {
+                LOGGER.error("Не удалось сохранить участника.");
+                return;
+            }
+
+            member.setRole("member");
+            member = membersService.update(member);
+
+            Optional<Members> updatedMember = membersService.find(member.getChatId(), member.getUserId());
+            if (updatedMember.isPresent() && updatedMember.get().getRole().equals("member")) {
+                LOGGER.info("Роль участника успешно обновлена.");
+            } else {
+                LOGGER.error("Не удалось обновить роль участника.");
+            }
+
+            membersService.delete(member.getChatId(), member.getUserId());
+
+            Optional<Members> deletedMember = membersService.find(member.getChatId(), member.getUserId());
+            if (deletedMember.isEmpty()) {
+                LOGGER.info("Участник успешно удален.");
+            } else {
+                LOGGER.error("Не удалось удалить участника.");
+            }
         } else {
-            LOGGER.error("Не удалось сохранить участника.");
-            return;
-        }
-
-        member.setRole("member");
-        member = membersService.update(member);
-
-        Optional<Members> updatedMember = membersService.find(member.getChatId(), member.getUserId());
-        if (updatedMember.isPresent() && updatedMember.get().getRole().equals("member")) {
-            LOGGER.info("Роль участника успешно обновлена.");
-        } else {
-            LOGGER.error("Не удалось обновить роль участника.");
-        }
-
-        membersService.delete(member.getChatId(), member.getUserId());
-
-        Optional<Members> deletedMember = membersService.find(member.getChatId(), member.getUserId());
-        if (deletedMember.isEmpty()) {
-            LOGGER.info("Участник успешно удален.");
-        } else {
-            LOGGER.error("Не удалось удалить участника.");
+            LOGGER.error("Чат или пользователь не найдены.");
         }
     }
 }
