@@ -30,9 +30,9 @@ public class Migration {
         Optional<User> retrievedUser1 = userService.find(user1.getId());
         Optional<User> retrievedUser2 = userService.find(user2.getId());
         if (retrievedUser1.isPresent() && retrievedUser2.isPresent()) {
-            LOGGER.info("Users saved successfully.");
+            LOGGER.info("Пользователи успешно сохранены.");
         } else {
-            LOGGER.error("Failed to save users.");
+            LOGGER.error("Не удалось сохранить пользователей.");
             return;
         }
 
@@ -41,9 +41,9 @@ public class Migration {
 
         Optional<Chat> retrievedChat = chatService.find(chat.getId());
         if (retrievedChat.isPresent()) {
-            LOGGER.info("Chat saved successfully.");
+            LOGGER.info("Чат успешно сохранен.");
         } else {
-            LOGGER.error("Failed to save chat.");
+            LOGGER.error("Не удалось сохранить чат.");
             return;
         }
 
@@ -52,17 +52,17 @@ public class Migration {
 
         Optional<Message> retrievedMessage = messageService.find(message.getId());
         if (retrievedMessage.isPresent()) {
-            LOGGER.info("Message saved successfully.");
+            LOGGER.info("Сообщение успешно сохранено.");
         } else {
-            LOGGER.error("Failed to save message.");
+            LOGGER.error("Не удалось сохранить сообщение.");
             return;
         }
 
         List<Message> messages = messageService.findAll(new PageRequest(0, 10L, new ArrayList<String>()), message);
         if (!messages.isEmpty()) {
-            LOGGER.info("Messages retrieved successfully.");
+            LOGGER.info("Сообщения успешно получены.");
         } else {
-            LOGGER.error("Failed to retrieve messages.");
+            LOGGER.error("Не удалось получить сообщения.");
         }
 
         message.setContent("Hello, Updated World!");
@@ -70,27 +70,27 @@ public class Migration {
 
         Optional<Message> updatedMessage = messageService.find(message.getId());
         if (updatedMessage.isPresent() && updatedMessage.get().getContent().equals("Hello, Updated World!")) {
-            LOGGER.info("Message updated successfully.");
+            LOGGER.info("Сообщение успешно обновлено.");
         } else {
-            LOGGER.error("Failed to update message.");
+            LOGGER.error("Не удалось обновить сообщение.");
         }
 
         messageService.delete(message.getId());
 
         Optional<Message> deletedMessage = messageService.find(message.getId());
         if (deletedMessage.isEmpty()) {
-            LOGGER.info("Message deleted successfully.");
+            LOGGER.info("Сообщение успешно удалено.");
         } else {
-            LOGGER.error("Failed to delete message.");
+            LOGGER.error("Не удалось удалить сообщение.");
         }
 
         chatService.delete(chat.getId());
 
         Optional<Chat> deletedChat = chatService.find(chat.getId());
         if (deletedChat.isEmpty()) {
-            LOGGER.info("Chat deleted successfully.");
+            LOGGER.info("Чат успешно удален.");
         } else {
-            LOGGER.error("Failed to delete chat.");
+            LOGGER.error("Не удалось удалить чат.");
         }
 
         userService.delete(user1.getId());
@@ -99,9 +99,9 @@ public class Migration {
         Optional<User> deletedUser1 = userService.find(user1.getId());
         Optional<User> deletedUser2 = userService.find(user2.getId());
         if (deletedUser1.isEmpty() && deletedUser2.isEmpty()) {
-            LOGGER.info("Users deleted successfully.");
+            LOGGER.info("Пользователи успешно удалены.");
         } else {
-            LOGGER.error("Failed to delete users.");
+            LOGGER.error("Не удалось удалить пользователей.");
         }
 
         Members member = new Members(chat.getId(), user1.getId(), "admin", true, true, true, null, LocalDateTime.now());
@@ -117,7 +117,6 @@ public class Migration {
 
         member.setRole("member");
         member = membersService.update(member);
-
 
         Optional<Members> updatedMember = membersService.find(member.getChatId(), member.getUserId());
         if (updatedMember.isPresent() && updatedMember.get().getRole().equals("member")) {
