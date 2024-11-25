@@ -86,4 +86,8 @@ public class MembersRepository extends BaseRepository<Members> {
     public Optional<Members> find(String chatId, String userId) {
         return super.find(chatId, userId);
     }
+
+    public void delete(String chatId, String userId) {
+        super.delete(chatId, userId);
+    }
 }

@@ -31,6 +31,11 @@ public class BaseService<T> implements Service<T>{
     }
 
     @Override
+    public Optional<T> find(String firstId, String secondId){
+        return repository.find(firstId, secondId);
+    }
+
+    @Override
     public void delete(String id) {
         repository.delete(id);
     }

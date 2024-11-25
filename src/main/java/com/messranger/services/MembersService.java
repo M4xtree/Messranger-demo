@@ -41,7 +41,7 @@ public class MembersService extends BaseService<Members>{
     public Members delete(String chatId, String userId){
         LOGGER.info("Removing member from chat with ID: {}", chatId);
         if(!repository.find(chatId, userId).isEmpty()){
-            repository.delete(userId);
+            repository.delete(chatId, userId);
         }
         return null;
     }

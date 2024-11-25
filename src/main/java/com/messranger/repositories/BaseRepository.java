@@ -219,5 +219,15 @@ public abstract class BaseRepository<T> implements Repository<T> {
         return Optional.empty();
     }
 
+    public void delete(String firstId, String secondId) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(deleteSql)) {
+            statement.setString(1, firstId);
+            statement.setString(2, secondId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting entity", e);
+        }
+    }
 
 }

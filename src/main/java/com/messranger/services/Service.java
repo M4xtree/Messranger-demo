@@ -12,6 +12,8 @@ public interface Service<T> {
 
     Optional<T> find(String id);
 
+    Optional<T> find(String firstId, String secondId);
+
     void delete(String id);
 
     List<T> findAll(PageRequest pageRequest);
