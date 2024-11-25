@@ -84,17 +84,17 @@ public class Migration {
             LOGGER.error("Не удалось удалить сообщение.");
         }
 
-        chatService.delete(chat.getId());
+//        chatService.delete(chat.getId());
+//
+//        Optional<Chat> deletedChat = chatService.find(chat.getId());
+//        if (deletedChat.isEmpty()) {
+//            LOGGER.info("Чат успешно удален.");
+//        } else {
+//            LOGGER.error("Не удалось удалить чат.");
+//        }
 
-        Optional<Chat> deletedChat = chatService.find(chat.getId());
-        if (deletedChat.isEmpty()) {
-            LOGGER.info("Чат успешно удален.");
-        } else {
-            LOGGER.error("Не удалось удалить чат.");
-        }
-
-        userService.delete(user1.getId());
-        userService.delete(user2.getId());
+//        userService.delete(user1.getId());
+//        userService.delete(user2.getId());
 
         Optional<User> deletedUser1 = userService.find(user1.getId());
         Optional<User> deletedUser2 = userService.find(user2.getId());
@@ -104,7 +104,6 @@ public class Migration {
             LOGGER.error("Не удалось удалить пользователей.");
         }
 
-        // Проверка наличия чата и пользователя перед добавлением участника
         if (retrievedChat.isPresent() && retrievedUser1.isPresent()) {
             Members member = new Members(chat.getId(), user1.getId(), "admin", true, true, true, null, LocalDateTime.now());
             member = membersService.save(member);

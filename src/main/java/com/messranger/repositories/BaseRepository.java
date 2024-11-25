@@ -1,6 +1,7 @@
 package com.messranger.repositories;
 
 import com.messranger.constants.SqlConstants;
+import com.messranger.entity.Members;
 import com.messranger.model.FilterColumn;
 import com.messranger.model.PageRequest;
 import com.zaxxer.hikari.HikariDataSource;
