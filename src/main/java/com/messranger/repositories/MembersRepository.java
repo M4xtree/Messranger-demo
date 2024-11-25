@@ -22,17 +22,17 @@ public class MembersRepository extends BaseRepository<Members> {
 
     @Override
     protected String getIdColumn() {
-        return "user_id" + "chat_id";
+        return "chat_id, user_id";
     }
 
     @Override
     protected String[] getColumnNames() {
-        return new String[]{"role", "can_delete_messages", "can_add_participants", "can_edit_messages", "caret", "joined_at"};
+        return new String[]{"chat_id", "user_id", "role", "can_delete_messages", "can_add_participants", "can_edit_messages", "caret", "joined_at"};
     }
 
     @Override
     protected String[] getColumnPlaceholders() {
-        return new String[]{"?", "?", "?", "?", "?", "?"};
+        return new String[]{"?", "?", "?", "?", "?", "?", "?", "?"};
     }
 
     @Override
@@ -64,8 +64,9 @@ public class MembersRepository extends BaseRepository<Members> {
         statement.setBoolean(3, member.isCanAddParticipants());
         statement.setBoolean(4, member.isCanEditMessages());
         statement.setString(5, member.getCaret());
-        statement.setString(6, member.getChatId());
-        statement.setString(7, member.getUserId());
+        statement.setTimestamp(6, Timestamp.valueOf(member.getJoinedAt()));
+        statement.setString(7, member.getChatId());
+        statement.setString(8, member.getUserId());
     }
 
     @Override
@@ -80,5 +81,9 @@ public class MembersRepository extends BaseRepository<Members> {
                 resultSet.getString("caret"),
                 resultSet.getTimestamp("joined_at").toLocalDateTime()
         );
+    }
+
+    public Optional<Members> find(String chatId, String userId) {
+        return super.find(chatId, userId);
     }
 }
