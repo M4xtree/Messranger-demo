@@ -145,7 +145,7 @@ public abstract class BaseRepository<T> implements Repository<T> {
     }
 
     protected String getInsertSql() {
-        String columns = "id, " + String.join(SqlConstants.DELIMITER, getColumnNames());
+        String columns = getIdColumn() + "," + String.join(SqlConstants.DELIMITER, getColumnNames());
         String placeholders = "?, "+String.join(SqlConstants.DELIMITER, getColumnPlaceholders());
         return String.format(INSERT_TEMPLATE, getTableName(), columns, placeholders);
     }
