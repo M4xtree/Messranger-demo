@@ -3,18 +3,17 @@ package com.messranger.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class Members {
+public class Members extends Identifier {
     private String chatId;
     private String userId;
-    private String role;  //('creator', 'admin', 'moderator', 'member')
+    private String role;
     private boolean canDeleteMessages;
     private boolean canAddParticipants;
     private boolean canEditMessages;
     private String caret;
     private LocalDateTime joinedAt;
 
-    public Members(String chatId, String userId, String role, boolean canDeleteMessages,
-                   boolean canAddParticipants, boolean canEditMessages, String caret, LocalDateTime joinedAt) {
+    public Members(String chatId, String userId, String role, boolean canDeleteMessages, boolean canAddParticipants, boolean canEditMessages, String caret, LocalDateTime joinedAt) {
         this.chatId = chatId;
         this.userId = userId;
         this.role = role;

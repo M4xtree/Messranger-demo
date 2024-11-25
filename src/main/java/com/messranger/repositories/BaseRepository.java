@@ -28,6 +28,8 @@ public abstract class BaseRepository<T> implements Repository<T> {
     private String updateSql;
     private String selectByIdSql;
     private String deleteSql;
+    private String compKeySelectSql;
+    private String compKeyDeleteSql;
 
     public BaseRepository(HikariDataSource dataSource) {
         this.dataSource = dataSource;
@@ -36,6 +38,10 @@ public abstract class BaseRepository<T> implements Repository<T> {
         updateSql = getUpdateSql();
         selectByIdSql = getSelectByIdSql();
         deleteSql = getDeleteSql();
+        compKeyDeleteSql = SqlConstants.DELETE + SqlConstants.FROM + getTableName()
+                + SqlConstants.WHERE + getIdColumn().split(",")[0] + " = ?" + SqlConstants.AND + getIdColumn().split(",")[1] + " = ?";
+        compKeySelectSql = SqlConstants.SELECT +  "*"+  SqlConstants.FROM + getTableName()
+                + SqlConstants.WHERE + getIdColumn().split(",")[0] + " = ?" + SqlConstants.AND + getIdColumn().split(",")[1] + " = ?";
     }
 
     protected abstract String getTableName();
@@ -203,9 +209,8 @@ public abstract class BaseRepository<T> implements Repository<T> {
     }
 
     public Optional<T> find(String firstId, String secondId) {
-        String selectQuery = "SELECT * FROM " + getTableName() + " WHERE " + getIdColumn().split(",")[0] + " = ? AND " + getIdColumn().split(",")[1] + " = ?";
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(selectQuery)) {
+             PreparedStatement statement = connection.prepareStatement(compKeySelectSql)) {
             statement.setString(1, firstId);
             statement.setString(2, secondId);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -220,9 +225,8 @@ public abstract class BaseRepository<T> implements Repository<T> {
     }
 
     public void delete(String firstId, String secondId) {
-        String deleteQuery = "DELETE FROM " + getTableName() + " WHERE " + getIdColumn().split(",")[0] + " = ? AND " + getIdColumn().split(",")[1] + " = ?";
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(deleteQuery)) {
+             PreparedStatement statement = connection.prepareStatement(compKeyDeleteSql)) {
             statement.setString(1, firstId);
             statement.setString(2, secondId);
             statement.executeUpdate();
