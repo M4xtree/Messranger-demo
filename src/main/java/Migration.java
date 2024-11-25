@@ -118,7 +118,7 @@ public class Migration {
         member.setRole("member");
         member = membersService.update(member);
 
-        // Проверяем, что роль участника обновлена
+
         Optional<Members> updatedMember = membersService.find(member.getChatId(), member.getUserId());
         if (updatedMember.isPresent() && updatedMember.get().getRole().equals("member")) {
             LOGGER.info("Роль участника успешно обновлена.");
