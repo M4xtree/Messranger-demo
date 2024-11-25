@@ -68,14 +68,17 @@ public class MessageRepository extends BaseRepository<Message> {
 
     @Override
     protected Message mapResultSetToEntity(ResultSet resultSet) throws SQLException {
+        Timestamp createdAtTimestamp = resultSet.getTimestamp("created_at");
+        Timestamp editedAtTimestamp = resultSet.getTimestamp("edited_at");
+
         return new Message(
                 resultSet.getString("chat_id"),
                 resultSet.getString("sender_id"),
                 resultSet.getString("content"),
-                resultSet.getTimestamp("created_at") != null ? resultSet.getTimestamp("created_at").toLocalDateTime() : null,
+                createdAtTimestamp != null ? createdAtTimestamp.toLocalDateTime() : null,
                 resultSet.getBoolean("is_deleted"),
                 resultSet.getBoolean("is_read"),
-                resultSet.getTimestamp("edited_at").toLocalDateTime() != null ? resultSet.getTimestamp("edited_at").toLocalDateTime() : null
+                editedAtTimestamp != null ? editedAtTimestamp.toLocalDateTime() : null
         );
     }
 }
