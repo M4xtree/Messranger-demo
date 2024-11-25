@@ -24,10 +24,8 @@ public class Migration {
         MessageService messageService = new MessageService();
         MembersService membersService = new MembersService();
 
-
         User user1 = userService.save(new User("user1", "1234567890"));
         User user2 = userService.save(new User("user2", "0987654321"));
-
 
         Optional<User> retrievedUser1 = userService.find(user1.getId());
         Optional<User> retrievedUser2 = userService.find(user2.getId());
@@ -38,10 +36,8 @@ public class Migration {
             return;
         }
 
-
         Chat chat = new Chat("group", user1.getId(), "Test Chat", "This is a test chat", false, LocalDateTime.now());
         chat = chatService.save(chat);
-
 
         Optional<Chat> retrievedChat = chatService.find(chat.getId());
         if (retrievedChat.isPresent()) {
@@ -51,10 +47,8 @@ public class Migration {
             return;
         }
 
-
         Message message = new Message(chat.getId(), user1.getId(), "Hello, World!", LocalDateTime.now(), false, false, null);
         message = messageService.save(message);
-
 
         Optional<Message> retrievedMessage = messageService.find(message.getId());
         if (retrievedMessage.isPresent()) {
@@ -64,18 +58,15 @@ public class Migration {
             return;
         }
 
-
-        List<Message> messages = messageService.findAll(new PageRequest(0, 10L, new ArrayList<String>()), message);
+        List<Message> messages = messageService.findAll(new PageRequest(0, 10L,new ArrayList<String>()), message);
         if (!messages.isEmpty()) {
             LOGGER.info("Messages retrieved successfully.");
         } else {
             LOGGER.error("Failed to retrieve messages.");
         }
 
-
         message.setContent("Hello, Updated World!");
         message = messageService.update(message);
-
 
         Optional<Message> updatedMessage = messageService.find(message.getId());
         if (updatedMessage.isPresent() && updatedMessage.get().getContent().equals("Hello, Updated World!")) {
@@ -84,9 +75,7 @@ public class Migration {
             LOGGER.error("Failed to update message.");
         }
 
-
         messageService.delete(message.getId());
-
 
         Optional<Message> deletedMessage = messageService.find(message.getId());
         if (deletedMessage.isEmpty()) {
@@ -95,9 +84,7 @@ public class Migration {
             LOGGER.error("Failed to delete message.");
         }
 
-
         chatService.delete(chat.getId());
-
 
         Optional<Chat> deletedChat = chatService.find(chat.getId());
         if (deletedChat.isEmpty()) {
@@ -106,10 +93,8 @@ public class Migration {
             LOGGER.error("Failed to delete chat.");
         }
 
-
         userService.delete(user1.getId());
         userService.delete(user2.getId());
-
 
         Optional<User> deletedUser1 = userService.find(user1.getId());
         Optional<User> deletedUser2 = userService.find(user2.getId());
@@ -119,11 +104,9 @@ public class Migration {
             LOGGER.error("Failed to delete users.");
         }
 
-
         Members member = new Members(chat.getId(), user1.getId(), "admin", true, true, true, null, LocalDateTime.now());
         member = membersService.save(member);
-
-
+//
 //        Optional<Members> retrievedMember = membersService.find(member.getChatId(), member.getUserId());
 //        if (retrievedMember.isPresent()) {
 //            LOGGER.info("Member saved successfully.");
@@ -136,12 +119,14 @@ public class Migration {
 //        member.setRole("member");
 //        member = membersService.update(member);
 //
+//
 //        Optional<Members> updatedMember = membersService.find(member.getChatId(), member.getUserId());
 //        if (updatedMember.isPresent() && updatedMember.get().getRole().equals("member")) {
 //            LOGGER.info("Member role updated successfully.");
 //        } else {
 //            LOGGER.error("Failed to update member role.");
 //        }
+//
 //
 //        membersService.delete(member.getChatId(), member.getUserId());
 //

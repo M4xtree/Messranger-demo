@@ -72,7 +72,7 @@ public class MessageRepository extends BaseRepository<Message> {
                 resultSet.getString("chat_id"),
                 resultSet.getString("sender_id"),
                 resultSet.getString("content"),
-                resultSet.getTimestamp("created_at").toLocalDateTime(),
+                resultSet.getTimestamp("created_at") != null ? resultSet.getTimestamp("created_at").toLocalDateTime() : null,
                 resultSet.getBoolean("is_deleted"),
                 resultSet.getBoolean("is_read"),
                 resultSet.getTimestamp("edited_at").toLocalDateTime() != null ? resultSet.getTimestamp("edited_at").toLocalDateTime() : null
