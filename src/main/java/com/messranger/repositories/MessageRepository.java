@@ -59,11 +59,14 @@ public class MessageRepository extends BaseRepository<Message> {
 
     @Override
     protected void prepareUpdateStatement(PreparedStatement statement, Message message) throws SQLException {
-        statement.setString(1, message.getContent());
-        statement.setBoolean(2, message.isDeleted());
-        statement.setBoolean(3, message.isRead());
-        statement.setTimestamp(4, message.getEditedAt() != null ? Timestamp.valueOf(message.getEditedAt()) : null);
-        statement.setString(5, message.getId());
+        statement.setString(1, message.getChatId());
+        statement.setString(2, message.getSenderId());
+        statement.setString(3, message.getContent());
+        statement.setTimestamp(4, Timestamp.valueOf(message.getCreatedAt()));
+        statement.setBoolean(5, message.isDeleted());
+        statement.setBoolean(6, message.isRead());
+        statement.setTimestamp(7, message.getEditedAt() != null ? Timestamp.valueOf(message.getEditedAt()) : null);
+        statement.setString(8, message.getId());
     }
 
     @Override
