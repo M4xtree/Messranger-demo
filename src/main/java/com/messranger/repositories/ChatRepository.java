@@ -51,12 +51,13 @@ public class ChatRepository extends BaseRepository<Chat> {
 
     @Override
     protected void prepareInsertStatement(PreparedStatement statement, Chat chat) throws SQLException {
-        statement.setString(1, chat.getType());
-        statement.setString(2, chat.getCreatedBy());
-        statement.setString(3, chat.getName());
-        statement.setString(4, chat.getDescription());
-        statement.setBoolean(5, chat.isPrivate());
-        statement.setTimestamp(6, Timestamp.valueOf(chat.getCreatedAt()));
+        statement.setString(1, chat.getId());
+        statement.setString(2, chat.getType());
+        statement.setString(3, chat.getCreatedBy());
+        statement.setString(4, chat.getName());
+        statement.setString(5, chat.getDescription());
+        statement.setBoolean(6, chat.isPrivate());
+        statement.setTimestamp(7, Timestamp.valueOf(chat.getCreatedAt()));
     }
 
     @Override
