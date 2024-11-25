@@ -18,7 +18,7 @@ import java.util.Optional;
 public class Migration {
     private static final Logger LOGGER = LoggerFactory.getLogger(Migration.class);
 
-    public static void main(String[] args) throws InterruptedException{
+    public static void main(String[] args) throws InterruptedException {
         UserService userService = new UserService();
         ChatService chatService = new ChatService();
         MessageService messageService = new MessageService();
@@ -58,7 +58,7 @@ public class Migration {
             return;
         }
 
-        List<Message> messages = messageService.findAll(new PageRequest(0, 10L,new ArrayList<String>()), message);
+        List<Message> messages = messageService.findAll(new PageRequest(0, 10L, new ArrayList<String>()), message);
         if (!messages.isEmpty()) {
             LOGGER.info("Messages retrieved successfully.");
         } else {
@@ -106,36 +106,33 @@ public class Migration {
 
         Members member = new Members(chat.getId(), user1.getId(), "admin", true, true, true, null, LocalDateTime.now());
         member = membersService.save(member);
-//
-//        Optional<Members> retrievedMember = membersService.find(member.getChatId(), member.getUserId());
-//        if (retrievedMember.isPresent()) {
-//            LOGGER.info("Member saved successfully.");
-//        } else {
-//            LOGGER.error("Failed to save member.");
-//            return;
-//        }
-//
-//
-//        member.setRole("member");
-//        member = membersService.update(member);
-//
-//
-//        Optional<Members> updatedMember = membersService.find(member.getChatId(), member.getUserId());
-//        if (updatedMember.isPresent() && updatedMember.get().getRole().equals("member")) {
-//            LOGGER.info("Member role updated successfully.");
-//        } else {
-//            LOGGER.error("Failed to update member role.");
-//        }
-//
-//
-//        membersService.delete(member.getChatId(), member.getUserId());
-//
-//
-//        Optional<Members> deletedMember = membersService.find(member.getChatId(), member.getUserId());
-//        if (deletedMember.isEmpty()) {
-//            LOGGER.info("Member deleted successfully.");
-//        } else {
-//            LOGGER.error("Failed to delete member.");
-//        }
+
+        Optional<Members> retrievedMember = membersService.find(member.getChatId(), member.getUserId());
+        if (retrievedMember.isPresent()) {
+            LOGGER.info("Участник успешно сохранен.");
+        } else {
+            LOGGER.error("Не удалось сохранить участника.");
+            return;
+        }
+
+        member.setRole("member");
+        member = membersService.update(member);
+
+        // Проверяем, что роль участника обновлена
+        Optional<Members> updatedMember = membersService.find(member.getChatId(), member.getUserId());
+        if (updatedMember.isPresent() && updatedMember.get().getRole().equals("member")) {
+            LOGGER.info("Роль участника успешно обновлена.");
+        } else {
+            LOGGER.error("Не удалось обновить роль участника.");
+        }
+
+        membersService.delete(member.getChatId(), member.getUserId());
+
+        Optional<Members> deletedMember = membersService.find(member.getChatId(), member.getUserId());
+        if (deletedMember.isEmpty()) {
+            LOGGER.info("Участник успешно удален.");
+        } else {
+            LOGGER.error("Не удалось удалить участника.");
+        }
     }
 }
