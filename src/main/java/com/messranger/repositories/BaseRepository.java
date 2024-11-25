@@ -220,8 +220,9 @@ public abstract class BaseRepository<T> implements Repository<T> {
     }
 
     public void delete(String firstId, String secondId) {
+        String deleteQuery = "DELETE FROM " + getTableName() + " WHERE " + getIdColumn().split(",")[0] + " = ? AND " + getIdColumn().split(",")[1] + " = ?";
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(deleteSql)) {
+             PreparedStatement statement = connection.prepareStatement(deleteQuery)) {
             statement.setString(1, firstId);
             statement.setString(2, secondId);
             statement.executeUpdate();
