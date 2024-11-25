@@ -3,7 +3,7 @@ package com.messranger.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class Members extends Identifier {
+public class Members{
     private String chatId;
     private String userId;
     private String role;
