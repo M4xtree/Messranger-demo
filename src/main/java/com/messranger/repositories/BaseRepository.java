@@ -203,18 +203,18 @@ public abstract class BaseRepository<T> implements Repository<T> {
     }
 
     public Optional<T> find(String firstId, String secondId) {
+        String selectQuery = "SELECT * FROM " + getTableName() + " WHERE " + getIdColumn().split(",")[0] + " = ? AND " + getIdColumn().split(",")[1] + " = ?";
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(selectByIdSql)) {
-
+             PreparedStatement statement = connection.prepareStatement(selectQuery)) {
             statement.setString(1, firstId);
             statement.setString(2, secondId);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return Optional.of(mapResultSetToEntity(resultSet));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(mapResultSetToEntity(resultSet));
+                }
             }
         } catch (SQLException e) {
-            LOGGER.error(e.toString());
-            throw new RuntimeException("Error while finding instance", e);
+            throw new RuntimeException("Error finding entity", e);
         }
         return Optional.empty();
     }
