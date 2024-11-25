@@ -3,6 +3,8 @@ package com.messranger.services;
 import com.messranger.config.DataBaseConfig;
 import com.messranger.model.PageRequest;
 import com.messranger.repositories.BaseRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
