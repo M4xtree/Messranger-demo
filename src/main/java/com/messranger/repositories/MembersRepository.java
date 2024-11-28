@@ -27,12 +27,12 @@ public class MembersRepository extends BaseRepository<Members> {
 
     @Override
     protected String[] getColumnNames() {
-        return new String[]{"role", "can_delete_messages", "can_add_participants", "can_edit_messages", "caret", "joined_at", "chat_id", "user_id"};
+        return new String[]{"role", "can_delete_messages", "can_add_participants", "can_edit_messages", "caret", "joined_at"};
     }
 
     @Override
     protected String[] getColumnPlaceholders() {
-        return new String[]{"?", "?", "?", "?", "?", "?", "?", "?"};
+        return new String[]{"?", "?", "?", "?", "?", "?"};
     }
 
     @Override
