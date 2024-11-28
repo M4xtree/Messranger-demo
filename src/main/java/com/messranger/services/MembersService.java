@@ -14,9 +14,11 @@ import java.util.Optional;
 
 public class MembersService extends BaseService<Members>{
     private static final Logger LOGGER = LoggerFactory.getLogger(MembersService.class);
+    private final ChatService chatService;
 
     public MembersService() {
         repository = new MembersRepository(dbConfig.getDataSource());
+        this.chatService = new ChatService();
     }
 
     @Override
@@ -62,8 +64,16 @@ public class MembersService extends BaseService<Members>{
             member.setCanEditMessages(instance.isCanEditMessages());
             member.setCaret(instance.getCaret());
             member.setJoinedAt(instance.getJoinedAt());
-            return ((MembersRepository) repository).updateMembers(member);
+            return repository.update(member);
         } else {
+            Chat chat = chatService.find(instance.getChatId()).orElseThrow(() -> new IllegalArgumentException("Chat not found"));
+            if (chat.getType().equals("p2p")) {
+                List<Members> members = findAll(new PageRequest(0, Long.MAX_VALUE, new ArrayList<>()), new Members(instance.getChatId(), null, null, false, false, false, null, null));
+                if (members.size() >= 2) {
+                    throw new IllegalArgumentException("P2P chat can have maximum 2 members");
+                }
+            }
+
             instance.setJoinedAt(LocalDateTime.now());
             return repository.save(instance);
         }
