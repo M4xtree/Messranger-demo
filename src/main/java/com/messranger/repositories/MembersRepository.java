@@ -3,6 +3,7 @@ package com.messranger.repositories;
 import com.messranger.entity.Members;
 import com.messranger.model.FilterColumn;
 import com.zaxxer.hikari.HikariDataSource;
+import com.messranger.constants.SqlConstants;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -90,4 +91,28 @@ public class MembersRepository extends BaseRepository<Members> {
     public void delete(String chatId, String userId) {
         super.delete(chatId, userId);
     }
+    public Members updateMembers(Members member) {
+        String sql = SqlConstants.UPDATE + "members" + SqlConstants.SET
+                + "role = ?, can_delete_messages = ?, can_add_participants = ?, can_edit_messages = ?, caret = ?, joined_at = ?"
+                + SqlConstants.WHERE + "chat_id = ?" + SqlConstants.AND + "user_id = ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, member.getRole());
+            statement.setBoolean(2, member.isCanDeleteMessages());
+            statement.setBoolean(3, member.isCanAddParticipants());
+            statement.setBoolean(4, member.isCanEditMessages());
+            statement.setString(5, member.getCaret());
+            statement.setTimestamp(6, Timestamp.valueOf(member.getJoinedAt()));
+            statement.setString(7, member.getChatId());
+            statement.setString(8, member.getUserId());
+
+            statement.executeUpdate();
+            return member;
+        } catch (SQLException e) {
+            LOGGER.error(e.toString());
+            throw new RuntimeException("Error while updating member", e);
+        }
+    }
+
 }

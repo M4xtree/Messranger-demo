@@ -25,7 +25,7 @@ public class MembersService extends BaseService<Members>{
         member.setCanEditMessages(instance.isCanEditMessages());
         member.setCaret(instance.getCaret());
         member.setJoinedAt(LocalDateTime.now());
-        return repository.update(member);
+        return ((MembersRepository) repository).updateMembers(member);
     }
 
     @Override

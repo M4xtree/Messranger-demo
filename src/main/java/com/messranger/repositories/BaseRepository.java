@@ -15,9 +15,9 @@ import java.util.Optional;
 
 public abstract class BaseRepository<T> implements Repository<T> {
 
-    private final HikariDataSource dataSource;
+    protected final HikariDataSource dataSource;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseRepository.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BaseRepository.class);
 
     private static final String INSERT_TEMPLATE = SqlConstants.INSERT +  SqlConstants.INTO + "%s (%s)" + SqlConstants.VALUES + "(%s)";
     private static final String UPDATE_TEMPLATE = SqlConstants.UPDATE + " %s" + SqlConstants.SET + "%s" + SqlConstants.WHERE + "%s = ?";
@@ -233,5 +233,6 @@ public abstract class BaseRepository<T> implements Repository<T> {
             throw new RuntimeException("Error deleting entity", e);
         }
     }
+
 
 }
