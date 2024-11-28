@@ -65,8 +65,6 @@ public class MembersRepository extends BaseRepository<Members> {
         statement.setBoolean(4, member.isCanEditMessages());
         statement.setString(5, member.getCaret());
         statement.setTimestamp(6, Timestamp.valueOf(member.getJoinedAt()));
-        statement.setString(7, member.getChatId());
-        statement.setString(8, member.getUserId());
     }
 
     @Override
