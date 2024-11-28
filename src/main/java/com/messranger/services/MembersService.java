@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class MembersService extends BaseService<Members>{
     private static final Logger LOGGER = LoggerFactory.getLogger(MembersService.class);
@@ -46,7 +47,7 @@ public class MembersService extends BaseService<Members>{
 
     @Override
     public Members save(Members instance) {
-        LOGGER.info("Adding member to chat with ID: {}", instance.getChatId());
+        LOGGER.info("Adding or updating member in chat with ID: {}", instance.getChatId());
         if (instance.getChatId() == null || instance.getChatId().isEmpty()) {
             throw new IllegalArgumentException("Chat ID cannot be null or empty");
         }
@@ -54,17 +55,30 @@ public class MembersService extends BaseService<Members>{
             throw new IllegalArgumentException("User ID cannot be null or empty");
         }
 
-        Chat chat = chatService.find(instance.getChatId()).orElseThrow(() -> new IllegalArgumentException("Chat not found"));
+        Optional<Members> existingMember = repository.find(instance.getChatId(), instance.getUserId());
+        if (existingMember.isPresent()) {
+            LOGGER.info("Updating existing member in chat with ID: {}", instance.getChatId());
+            Members member = existingMember.get();
+            member.setRole(instance.getRole());
+            member.setCanDeleteMessages(instance.isCanDeleteMessages());
+            member.setCanAddParticipants(instance.isCanAddParticipants());
+            member.setCanEditMessages(instance.isCanEditMessages());
+            member.setCaret(instance.getCaret());
+            member.setJoinedAt(instance.getJoinedAt());
+            return repository.update(member);
+        } else {
+            Chat chat = chatService.find(instance.getChatId()).orElseThrow(() -> new IllegalArgumentException("Chat not found"));
 
-        if (chat.getType().equals("p2p")) {
-            List<Members> members = findAll(new PageRequest(0, Long.MAX_VALUE, new ArrayList<>()), new Members(instance.getChatId(), null, null, false, false, false, null, null));
-            if (members.size() >= 2) {
-                throw new IllegalArgumentException("P2P chat can have maximum 2 members");
+            if (chat.getType().equals("p2p")) {
+                List<Members> members = findAll(new PageRequest(0, Long.MAX_VALUE, new ArrayList<>()), new Members(instance.getChatId(), null, null, false, false, false, null, null));
+                if (members.size() >= 2) {
+                    throw new IllegalArgumentException("P2P chat can have maximum 2 members");
+                }
             }
-        }
 
-        instance.setJoinedAt(LocalDateTime.now());
-        return repository.save(instance);
+            instance.setJoinedAt(LocalDateTime.now());
+            return repository.save(instance);
+        }
     }
 
     public void delete(String chatId, String userId) {
