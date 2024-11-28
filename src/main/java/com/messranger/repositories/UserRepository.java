@@ -38,8 +38,6 @@ public class UserRepository extends BaseRepository<User> {
     @Override
     protected List<FilterColumn<?>> toFilterColumns(User filter) {
         List<FilterColumn<?>> result = new ArrayList<>();
-        Optional.ofNullable(filter.getId())
-                .ifPresent(it -> result.add(new FilterColumn<>("id", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
         Optional.ofNullable(filter.getNickname())
                 .ifPresent(it -> result.add(new FilterColumn<>("nickname", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
         Optional.ofNullable(filter.getPhoneNumber())

@@ -126,22 +126,23 @@ public abstract class BaseRepository<T> implements Repository<T> {
     }
     @Override
     public List<T> findAll(PageRequest pageRequest, T filter) {
-        List<FilterColumn<?>> filterColumns = toFilterColumns(filter);
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(getFindAllSql(pageRequest, filterColumns))) {
-            Integer index = 1;
-            for (FilterColumn<?> filterColumn: filterColumns) {
-                filterColumn.getBindingFunction().accept(statement, index);
-                index++;
+             PreparedStatement statement = connection.prepareStatement(getFindAllSql(pageRequest, filter))) {
+
+            int index = 1;
+            for (FilterColumn<?> filterColumn : toFilterColumns(filter)) {
+                filterColumn.getBindingFunction().accept(statement, index++);
             }
             statement.setInt(index++, pageRequest.getLimit());
             statement.setLong(index, pageRequest.getOffset());
 
             ResultSet resultSet = statement.executeQuery();
             return mapResultSetToEntities(resultSet);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             LOGGER.error(e.toString());
             throw new RuntimeException("Error while finding all instances", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -186,6 +187,26 @@ public abstract class BaseRepository<T> implements Repository<T> {
                     .map(FilterColumn::toString)
                     .toList();
             baseSql.append(String.join(SqlConstants.AND, predicates));
+        }
+        if (pageRequest.getSortBy() != null && !pageRequest.getSortBy().isEmpty()) {
+            baseSql.append(SqlConstants.ORDER_BY).append(String.join(SqlConstants.DELIMITER, pageRequest.getSortBy()));
+        }
+        baseSql.append(SqlConstants.PAGE_SIZE);
+        return baseSql.toString();
+    }
+
+    protected String getFindAllSql(PageRequest pageRequest, T filter) {
+        String columns = String.join(SqlConstants.DELIMITER, getColumnNames());
+        StringBuilder baseSql = new StringBuilder(String.format(FIND_ALL_TEMPLATE, columns, getTableName()));
+        if (filter != null) {
+            List<FilterColumn<?>> filterColumns = toFilterColumns(filter);
+            if (!filterColumns.isEmpty()) {
+                baseSql.append(SqlConstants.WHERE);
+                List<String> predicates = filterColumns.stream()
+                        .map(FilterColumn::toString)
+                        .toList();
+                baseSql.append(String.join(SqlConstants.AND, predicates));
+            }
         }
         if (pageRequest.getSortBy() != null && !pageRequest.getSortBy().isEmpty()) {
             baseSql.append(SqlConstants.ORDER_BY).append(String.join(SqlConstants.DELIMITER, pageRequest.getSortBy()));

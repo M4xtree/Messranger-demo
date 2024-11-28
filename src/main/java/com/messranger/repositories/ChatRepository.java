@@ -37,15 +37,10 @@ public class ChatRepository extends BaseRepository<Chat> {
     @Override
     protected List<FilterColumn<?>> toFilterColumns(Chat filter) {
         List<FilterColumn<?>> result = new ArrayList<>();
-        Optional.ofNullable(filter.getId())
-                .ifPresent(it -> result.add(new FilterColumn<>("id", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
         Optional.ofNullable(filter.getType())
                 .ifPresent(it -> result.add(new FilterColumn<>("type", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
         Optional.ofNullable(filter.getCreatedBy())
-                .filter(it -> it != null)
                 .ifPresent(it -> result.add(new FilterColumn<>("created_by", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
-        Optional.ofNullable(filter.getName())
-                .ifPresent(it -> result.add(new FilterColumn<>("name", "LIKE", "%" + it + "%", (stmt, idx) -> stmt.setString(idx, "%" + it + "%"))));
         return result;
     }
 
