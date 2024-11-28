@@ -32,7 +32,7 @@ public class MembersRepository extends BaseRepository<Members> {
 
     @Override
     protected String[] getColumnPlaceholders() {
-        return new String[]{"?", "?", "?", "?", "?", "?"};
+        return new String[]{"?", "?", "?", "?", "?", "?", "?", "?"};
     }
 
     @Override
