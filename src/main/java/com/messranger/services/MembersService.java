@@ -67,17 +67,32 @@ public class MembersService extends BaseService<Members>{
         return repository.save(instance);
     }
 
-    public Members delete(String chatId, String userId){
+    public void delete(String chatId, String userId) {
         LOGGER.info("Removing member from chat with ID: {}", chatId);
-        if(!repository.find(chatId, userId).isEmpty()){
-            repository.delete(chatId, userId);
+        if (chatId == null || chatId.isEmpty()) {
+            throw new IllegalArgumentException("Chat ID cannot be null or empty");
         }
-        return null;
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("User ID cannot be null or empty");
+        }
+
+        Members member = repository.find(chatId, userId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        if (member.getRole().equals("creator")) {
+            throw new IllegalArgumentException("Creator of the chat cannot be removed");
+        }
+
+        repository.delete(chatId, userId);
     }
 
     public void promoteToAdmin(String chatId, String userId) {
         LOGGER.info("Promoting member to admin in chat with ID: {}", chatId);
         Members member = repository.find(chatId, userId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        if (member.getRole().equals("creator")) {
+            throw new IllegalArgumentException("Creator cannot be promoted to admin");
+        }
+
         member.setRole("admin");
         member.setCanDeleteMessages(true);
         member.setCanAddParticipants(true);
@@ -88,6 +103,11 @@ public class MembersService extends BaseService<Members>{
     public void demoteToMember(String chatId, String userId) {
         LOGGER.info("Demoting admin to member in chat with ID: {}", chatId);
         Members member = repository.find(chatId, userId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        if (member.getRole().equals("creator")) {
+            throw new IllegalArgumentException("Creator cannot be demoted to member");
+        }
+
         member.setRole("member");
         member.setCanDeleteMessages(false);
         member.setCanAddParticipants(false);
@@ -98,9 +118,13 @@ public class MembersService extends BaseService<Members>{
     public void promoteToRedactor(String chatId, String userId) {
         LOGGER.info("Promoting member to redactor in chat with ID: {}", chatId);
         Members member = repository.find(chatId, userId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        if (member.getRole().equals("creator")) {
+            throw new IllegalArgumentException("Creator cannot be promoted to redactor");
+        }
+
         member.setRole("redactor");
         member.setCanEditMessages(true);
         repository.update(member);
     }
-
 }

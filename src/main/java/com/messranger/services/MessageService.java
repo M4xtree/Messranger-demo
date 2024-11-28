@@ -25,6 +25,7 @@ public class MessageService extends BaseService<Message> {
 
     public MessageService() {
         repository = new MessageRepository(dbConfig.getDataSource());
+        chatService = new ChatService();
     }
 
     @Override
