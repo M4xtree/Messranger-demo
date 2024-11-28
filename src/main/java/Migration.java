@@ -84,26 +84,6 @@ public class Migration {
             LOGGER.error("Не удалось удалить сообщение.");
         }
 
-//        chatService.delete(chat.getId());
-//
-//        Optional<Chat> deletedChat = chatService.find(chat.getId());
-//        if (deletedChat.isEmpty()) {
-//            LOGGER.info("Чат успешно удален.");
-//        } else {
-//            LOGGER.error("Не удалось удалить чат.");
-//        }
-
-//        userService.delete(user1.getId());
-//        userService.delete(user2.getId());
-
-        Optional<User> deletedUser1 = userService.find(user1.getId());
-        Optional<User> deletedUser2 = userService.find(user2.getId());
-        if (deletedUser1.isEmpty() && deletedUser2.isEmpty()) {
-            LOGGER.info("Пользователи успешно удалены.");
-        } else {
-            LOGGER.error("Не удалось удалить пользователей.");
-        }
-
         if (retrievedChat.isPresent() && retrievedUser1.isPresent()) {
             Members member = new Members(chat.getId(), user1.getId(), "admin", true, true, true, null, LocalDateTime.now());
             member = membersService.save(member);
@@ -136,6 +116,26 @@ public class Migration {
             }
         } else {
             LOGGER.error("Чат или пользователь не найдены.");
+        }
+
+        chatService.delete(chat.getId());
+
+        Optional<Chat> deletedChat = chatService.find(chat.getId());
+        if (deletedChat.isEmpty()) {
+            LOGGER.info("Чат успешно удален.");
+        } else {
+            LOGGER.error("Не удалось удалить чат.");
+        }
+
+        userService.delete(user1.getId());
+        userService.delete(user2.getId());
+
+        Optional<User> deletedUser1 = userService.find(user1.getId());
+        Optional<User> deletedUser2 = userService.find(user2.getId());
+        if (deletedUser1.isEmpty() && deletedUser2.isEmpty()) {
+            LOGGER.info("Пользователи успешно удалены.");
+        } else {
+            LOGGER.error("Не удалось удалить пользователей.");
         }
     }
 }

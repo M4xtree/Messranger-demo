@@ -17,6 +17,14 @@ public class MembersService extends BaseService<Members>{
     public Members update(Members instance) {
         LOGGER.info("Updating member role in chat with ID: {}", instance.getChatId());
         Members member = repository.find(instance.getChatId(),instance.getUserId()).orElseThrow();
+
+        if (instance.getRole() == null || instance.getRole().isEmpty()) {
+            throw new IllegalArgumentException("Role cannot be null or empty");
+        }
+        if (instance.getJoinedAt() == null) {
+            instance.setJoinedAt(LocalDateTime.now());
+        }
+
         member.setChatId(instance.getChatId());
         member.setUserId(instance.getUserId());
         member.setRole(instance.getRole());
@@ -32,8 +40,13 @@ public class MembersService extends BaseService<Members>{
     public Members save(Members instance) {
         LOGGER.info("Adding member to chat with ID: {}", instance.getChatId());
         if (repository.find(instance.getChatId(), instance.getUserId()).isEmpty()) {
-            Members member = new Members(instance.getChatId(), instance.getUserId(), instance.getRole(), false, false, false, null, LocalDateTime.now());
-            return repository.save(member);
+            if (instance.getRole() == null || instance.getRole().isEmpty()) {
+                throw new IllegalArgumentException("Role cannot be null or empty");
+            }
+            if (instance.getJoinedAt() == null) {
+                instance.setJoinedAt(LocalDateTime.now());
+            }
+            return repository.save(instance);
         }
         return null;
     }

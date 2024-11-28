@@ -21,6 +21,20 @@ public class MessageService extends BaseService<Message> {
     @Override
     public Message update(Message instance){
         Message message = repository.find(instance.getId()).orElseThrow();
+
+        if (instance.getChatId() == null || instance.getChatId().isEmpty()) {
+            throw new IllegalArgumentException("Chat ID cannot be null or empty");
+        }
+        if (instance.getSenderId() == null || instance.getSenderId().isEmpty()) {
+            throw new IllegalArgumentException("Sender ID cannot be null or empty");
+        }
+        if (instance.getContent() == null || instance.getContent().isEmpty()) {
+            throw new IllegalArgumentException("Content cannot be null or empty");
+        }
+        if (instance.getCreatedAt() == null) {
+            instance.setCreatedAt(LocalDateTime.now());
+        }
+
         message.setId(instance.getId());
         message.setContent(instance.getContent());
         message.setDeleted(instance.isDeleted());
@@ -32,9 +46,20 @@ public class MessageService extends BaseService<Message> {
     @Override
     public Message save(Message instance) {
         LOGGER.info("Sending message to chat with ID: {}", instance.getChatId());
-        if(repository.find(instance.getId()).isEmpty()) {
-            Message message = new Message(instance.getChatId(), instance.getSenderId(), instance.getContent(), LocalDateTime.now(), false, false, null);
-            return repository.save(message);
+        if (repository.find(instance.getId()).isEmpty()) {
+            if (instance.getChatId() == null || instance.getChatId().isEmpty()) {
+                throw new IllegalArgumentException("Chat ID cannot be null or empty");
+            }
+            if (instance.getSenderId() == null || instance.getSenderId().isEmpty()) {
+                throw new IllegalArgumentException("Sender ID cannot be null or empty");
+            }
+            if (instance.getContent() == null || instance.getContent().isEmpty()) {
+                throw new IllegalArgumentException("Content cannot be null or empty");
+            }
+            if (instance.getCreatedAt() == null) {
+                instance.setCreatedAt(LocalDateTime.now());
+            }
+            return repository.save(instance);
         }
         return null;
     }
