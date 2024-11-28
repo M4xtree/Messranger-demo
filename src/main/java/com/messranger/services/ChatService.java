@@ -11,6 +11,7 @@ import com.messranger.entity.Message;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
@@ -71,12 +72,19 @@ public class ChatService extends BaseService<Chat>{
 
     @Override
     public void delete(String id) {
-        messageService.findAll(new PageRequest(0, Long.MAX_VALUE, new ArrayList<>()), new Message(id, null, null, null, false, false, null))
-                .forEach(message -> messageService.delete(message.getId()));
+        LOGGER.info("Deleting chat with ID: {}", id);
+        if (!repository.find(id).isEmpty()) {
+            List<Message> messages = messageService.findAll(new PageRequest(0, Long.MAX_VALUE, new ArrayList<>()), new Message(id, null, null, null, false, false, null));
+            if (!messages.isEmpty()) {
+                messages.forEach(message -> messageService.delete(message.getId()));
+            }
+            
+            List<Members> members = membersService.findAll(new PageRequest(0, Long.MAX_VALUE, new ArrayList<>()), new Members(id, null, null, false, false, false, null, null));
+            if (!members.isEmpty()) {
+                members.forEach(member -> membersService.delete(member.getChatId(), member.getUserId()));
+            }
 
-        membersService.findAll(new PageRequest(0, Long.MAX_VALUE, new ArrayList<>()), new Members(id, null, null, false, false, false, null, null))
-                .forEach(member -> membersService.delete(member.getChatId(), member.getUserId()));
-
-        repository.delete(id);
+            repository.delete(id);
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.messranger.model.PageRequest;
 import com.messranger.repositories.MessageRepository;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -67,8 +68,11 @@ public class MessageService extends BaseService<Message> {
     @Override
     public List<Message> findAll(PageRequest pageRequest, Message filter) {
         LOGGER.info("Getting messages for chat with ID: {}", filter.getChatId());
-        Message newFilter = repository.find(filter.getId()).orElseThrow();
-        newFilter.setChatId(filter.getChatId());
-        return repository.findAll(pageRequest, filter);
+        List<Message> messages = repository.findAll(pageRequest, filter);
+        if (messages.isEmpty()) {
+            LOGGER.warn("No messages found for the given criteria.");
+            return Collections.emptyList();
+        }
+        return messages;
     }
 }
