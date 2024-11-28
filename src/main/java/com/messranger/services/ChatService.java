@@ -32,16 +32,27 @@ public class ChatService extends BaseService<Chat>{
     @Override
     public Chat save(Chat instance) {
         LOGGER.info("Saving chat with type: {}", instance.getType());
+        if (instance.getType() == null || instance.getType().isEmpty()) {
+            throw new IllegalArgumentException("Chat type cannot be null or empty");
+        }
+        if (instance.getCreatedBy() == null || instance.getCreatedBy().isEmpty()) {
+            throw new IllegalArgumentException("CreatedBy cannot be null or empty");
+        }
         if (repository.find(instance.getId()).isEmpty()) {
-            if (instance.getType() == null || instance.getType().isEmpty()) {
-                throw new IllegalArgumentException("Chat type cannot be null or empty");
+            switch (instance.getType()) {
+                case "p2p":
+                    instance.setPrivate(true);
+                    break;
+                case "group":
+                    instance.setPrivate(true);
+                    break;
+                case "channel":
+                    instance.setPrivate(false);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid chat type");
             }
-            if (instance.getCreatedBy() == null || instance.getCreatedBy().isEmpty()) {
-                throw new IllegalArgumentException("CreatedBy cannot be null or empty");
-            }
-            if (instance.getCreatedAt() == null) {
-                instance.setCreatedAt(LocalDateTime.now());
-            }
+            instance.setCreatedAt(LocalDateTime.now());
             return repository.save(instance);
         }
         return null;
@@ -78,7 +89,7 @@ public class ChatService extends BaseService<Chat>{
             if (!messages.isEmpty()) {
                 messages.forEach(message -> messageService.delete(message.getId()));
             }
-            
+
             List<Members> members = membersService.findAll(new PageRequest(0, Long.MAX_VALUE, new ArrayList<>()), new Members(id, null, null, false, false, false, null, null));
             if (!members.isEmpty()) {
                 members.forEach(member -> membersService.delete(member.getChatId(), member.getUserId()));

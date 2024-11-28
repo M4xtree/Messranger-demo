@@ -47,6 +47,11 @@ public class Migration {
             return;
         }
 
+        Members member1 = new Members(chat.getId(), user1.getId(), "member", false, false, false, null, LocalDateTime.now());
+        Members member2 = new Members(chat.getId(), user2.getId(), "member", false, false, false, null, LocalDateTime.now());
+        membersService.save(member1);
+        membersService.save(member2);
+
         Message message = new Message(chat.getId(), user1.getId(), "Hello, World!", LocalDateTime.now(), false, false, null);
         message = messageService.save(message);
 
@@ -58,84 +63,22 @@ public class Migration {
             return;
         }
 
-        List<Message> messages = messageService.findAll(new PageRequest(0, 10L, new ArrayList<String>()), message);
-        if (!messages.isEmpty()) {
-            LOGGER.info("Сообщения успешно получены.");
+        List<Message> unreadMessages = messageService.getUnreadMessages(chat.getId(), LocalDateTime.now().minusDays(1));
+        if (!unreadMessages.isEmpty()) {
+            LOGGER.info("Непрочитанные сообщения успешно получены.");
+            unreadMessages.forEach(msg -> messageService.markAsRead(msg.getId()));
         } else {
-            LOGGER.error("Не удалось получить сообщения.");
+            LOGGER.error("Не удалось получить непрочитанные сообщения.");
         }
 
-        message.setContent("Hello, Updated World!");
-        message = messageService.update(message);
+        membersService.promoteToAdmin(chat.getId(), user1.getId());
+        membersService.demoteToMember(chat.getId(), user2.getId());
 
-        Optional<Message> updatedMessage = messageService.find(message.getId());
-        if (updatedMessage.isPresent() && updatedMessage.get().getContent().equals("Hello, Updated World!")) {
-            LOGGER.info("Сообщение успешно обновлено.");
-        } else {
-            LOGGER.error("Не удалось обновить сообщение.");
-        }
-
-        messageService.delete(message.getId());
-
-        Optional<Message> deletedMessage = messageService.find(message.getId());
-        if (deletedMessage.isEmpty()) {
-            LOGGER.info("Сообщение успешно удалено.");
-        } else {
-            LOGGER.error("Не удалось удалить сообщение.");
-        }
-
-        if (retrievedChat.isPresent() && retrievedUser1.isPresent()) {
-            Members member = new Members(chat.getId(), user1.getId(), "admin", true, true, true, null, LocalDateTime.now());
-            member = membersService.save(member);
-
-            Optional<Members> retrievedMember = membersService.find(member.getChatId(), member.getUserId());
-            if (retrievedMember.isPresent()) {
-                LOGGER.info("Участник успешно сохранен.");
-            } else {
-                LOGGER.error("Не удалось сохранить участника.");
-                return;
-            }
-
-            member.setRole("member");
-            member = membersService.update(member);
-
-            Optional<Members> updatedMember = membersService.find(member.getChatId(), member.getUserId());
-            if (updatedMember.isPresent() && updatedMember.get().getRole().equals("member")) {
-                LOGGER.info("Роль участника успешно обновлена.");
-            } else {
-                LOGGER.error("Не удалось обновить роль участника.");
-            }
-
-            membersService.delete(member.getChatId(), member.getUserId());
-
-            Optional<Members> deletedMember = membersService.find(member.getChatId(), member.getUserId());
-            if (deletedMember.isEmpty()) {
-                LOGGER.info("Участник успешно удален.");
-            } else {
-                LOGGER.error("Не удалось удалить участника.");
-            }
-        } else {
-            LOGGER.error("Чат или пользователь не найдены.");
-        }
+        membersService.delete(chat.getId(), user2.getId());
 
         chatService.delete(chat.getId());
 
-        Optional<Chat> deletedChat = chatService.find(chat.getId());
-        if (deletedChat.isEmpty()) {
-            LOGGER.info("Чат успешно удален.");
-        } else {
-            LOGGER.error("Не удалось удалить чат.");
-        }
-
         userService.delete(user1.getId());
         userService.delete(user2.getId());
-
-        Optional<User> deletedUser1 = userService.find(user1.getId());
-        Optional<User> deletedUser2 = userService.find(user2.getId());
-        if (deletedUser1.isEmpty() && deletedUser2.isEmpty()) {
-            LOGGER.info("Пользователи успешно удалены.");
-        } else {
-            LOGGER.error("Не удалось удалить пользователей.");
-        }
     }
 }

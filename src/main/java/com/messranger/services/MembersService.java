@@ -2,15 +2,23 @@ package com.messranger.services;
 
 import com.messranger.entity.Members;
 import com.messranger.repositories.MembersRepository;
+import com.messranger.services.ChatService;
+import com.messranger.entity.Chat;
+import com.messranger.model.PageRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MembersService extends BaseService<Members>{
     private static final Logger LOGGER = LoggerFactory.getLogger(MembersService.class);
 
+    private ChatService chatService;
+
     public MembersService() {
         repository = new MembersRepository(dbConfig.getDataSource());
+        chatService = new ChatService();
     }
 
     @Override
@@ -39,16 +47,24 @@ public class MembersService extends BaseService<Members>{
     @Override
     public Members save(Members instance) {
         LOGGER.info("Adding member to chat with ID: {}", instance.getChatId());
-        if (repository.find(instance.getChatId(), instance.getUserId()).isEmpty()) {
-            if (instance.getRole() == null || instance.getRole().isEmpty()) {
-                throw new IllegalArgumentException("Role cannot be null or empty");
-            }
-            if (instance.getJoinedAt() == null) {
-                instance.setJoinedAt(LocalDateTime.now());
-            }
-            return repository.save(instance);
+        if (instance.getChatId() == null || instance.getChatId().isEmpty()) {
+            throw new IllegalArgumentException("Chat ID cannot be null or empty");
         }
-        return null;
+        if (instance.getUserId() == null || instance.getUserId().isEmpty()) {
+            throw new IllegalArgumentException("User ID cannot be null or empty");
+        }
+
+        Chat chat = chatService.find(instance.getChatId()).orElseThrow(() -> new IllegalArgumentException("Chat not found"));
+
+        if (chat.getType().equals("p2p")) {
+            List<Members> members = findAll(new PageRequest(0, Long.MAX_VALUE, new ArrayList<>()), new Members(instance.getChatId(), null, null, false, false, false, null, null));
+            if (members.size() >= 2) {
+                throw new IllegalArgumentException("P2P chat can have maximum 2 members");
+            }
+        }
+
+        instance.setJoinedAt(LocalDateTime.now());
+        return repository.save(instance);
     }
 
     public Members delete(String chatId, String userId){
@@ -57,6 +73,34 @@ public class MembersService extends BaseService<Members>{
             repository.delete(chatId, userId);
         }
         return null;
+    }
+
+    public void promoteToAdmin(String chatId, String userId) {
+        LOGGER.info("Promoting member to admin in chat with ID: {}", chatId);
+        Members member = repository.find(chatId, userId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        member.setRole("admin");
+        member.setCanDeleteMessages(true);
+        member.setCanAddParticipants(true);
+        member.setCanEditMessages(true);
+        repository.update(member);
+    }
+
+    public void demoteToMember(String chatId, String userId) {
+        LOGGER.info("Demoting admin to member in chat with ID: {}", chatId);
+        Members member = repository.find(chatId, userId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        member.setRole("member");
+        member.setCanDeleteMessages(false);
+        member.setCanAddParticipants(false);
+        member.setCanEditMessages(false);
+        repository.update(member);
+    }
+
+    public void promoteToRedactor(String chatId, String userId) {
+        LOGGER.info("Promoting member to redactor in chat with ID: {}", chatId);
+        Members member = repository.find(chatId, userId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        member.setRole("redactor");
+        member.setCanEditMessages(true);
+        repository.update(member);
     }
 
 }
