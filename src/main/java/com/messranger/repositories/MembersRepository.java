@@ -92,7 +92,7 @@ public class MembersRepository extends BaseRepository<Members> {
         super.delete(chatId, userId);
     }
     public Members updateMembers(Members member) {
-        String sql = SqlConstants.UPDATE + "members" + SqlConstants.SET
+        String sql = SqlConstants.UPDATE + " members" + SqlConstants.SET
                 + "role = ?, can_delete_messages = ?, can_add_participants = ?, can_edit_messages = ?, caret = ?, joined_at = ?"
                 + SqlConstants.WHERE + "chat_id = ?" + SqlConstants.AND + "user_id = ?";
         try (Connection connection = dataSource.getConnection();

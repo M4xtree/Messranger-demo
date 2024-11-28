@@ -21,11 +21,9 @@ public class MessageService extends BaseService<Message> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
 
     private MembersService membersService;
-    private ChatService chatService;
 
     public MessageService() {
         repository = new MessageRepository(dbConfig.getDataSource());
-        chatService = new ChatService();
     }
 
     @Override
@@ -66,14 +64,13 @@ public class MessageService extends BaseService<Message> {
             throw new IllegalArgumentException("Content cannot be null or empty");
         }
 
-        Chat chat = chatService.find(instance.getChatId()).orElseThrow(() -> new IllegalArgumentException("Chat not found"));
         Members member = membersService.find(instance.getChatId(), instance.getSenderId()).orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
-        if (chat.getType().equals("channel") && !member.getRole().equals("creator") && !member.getRole().equals("redactor")) {
+        if (!member.getRole().equals("creator") && !member.getRole().equals("redactor")) {
             throw new IllegalArgumentException("Members in channel cannot send messages");
         }
 
-        if (chat.getType().equals("group") && !member.getRole().equals("creator") && !member.getRole().equals("admin") && !member.getRole().equals("member")) {
+        if (!member.getRole().equals("creator") && !member.getRole().equals("admin") && !member.getRole().equals("member")) {
             throw new IllegalArgumentException("Members in group cannot send messages");
         }
 
