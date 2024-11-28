@@ -53,14 +53,21 @@ public class ChatService extends BaseService<Chat>{
                     throw new IllegalArgumentException("Invalid chat type");
             }
             instance.setCreatedAt(LocalDateTime.now());
-            return repository.save(instance);
+            Chat chat = repository.save(instance);
+            if (instance.getType().equals("p2p")) {
+                membersService.save(new Members(chat.getId(), instance.getCreatedBy(), "member", false, false, false, null, LocalDateTime.now()));
+            } else {
+                membersService.save(new Members(chat.getId(), instance.getCreatedBy(), "creator", true, true, true, null, LocalDateTime.now()));
+            }
+            return chat;
         }
         return null;
     }
 
     @Override
     public Chat update(Chat instance) {
-        Chat chat = repository.find(instance.getId()).orElseThrow();
+        LOGGER.info("Updating chat with ID: {}", instance.getId());
+        Chat chat = repository.find(instance.getId()).orElseThrow(() -> new IllegalArgumentException("Chat not found"));
 
         if (instance.getType() == null || instance.getType().isEmpty()) {
             throw new IllegalArgumentException("Chat type cannot be null or empty");
@@ -68,16 +75,14 @@ public class ChatService extends BaseService<Chat>{
         if (instance.getCreatedBy() == null || instance.getCreatedBy().isEmpty()) {
             throw new IllegalArgumentException("CreatedBy cannot be null or empty");
         }
-        if (instance.getCreatedAt() == null) {
-            instance.setCreatedAt(LocalDateTime.now());
-        }
 
-        chat.setId(instance.getId());
         chat.setType(instance.getType());
         chat.setCreatedBy(instance.getCreatedBy());
         chat.setName(instance.getName());
         chat.setDescription(instance.getDescription());
         chat.setPrivate(instance.isPrivate());
+        chat.setCreatedAt(instance.getCreatedAt());
+
         return repository.update(chat);
     }
 
