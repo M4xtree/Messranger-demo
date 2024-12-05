@@ -39,7 +39,7 @@ public class MembersService extends BaseService<Members> {
             member.setJoinedAt(instance.getJoinedAt());
             return repository.update(member);
         }
-        return null;
+        return repository.save(instance);
     }
 
     @Override
