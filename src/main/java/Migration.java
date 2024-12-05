@@ -68,7 +68,10 @@ public class Migration {
         chatService.getMembersService().promoteToAdmin(chat.getId(), user1.getId());
         chatService.getMembersService().demoteToMember(chat.getId(), user2.getId());
 
+        chatService.getMembersService().delete(chat.getId(), user1.getId());
         chatService.getMembersService().delete(chat.getId(), user2.getId());
+
+        chatService.getMessageService().delete(message.getId());
 
         chatService.delete(chat.getId());
 
