@@ -1,32 +1,31 @@
 package com.messranger.services;
 
 import com.messranger.entity.Chat;
-import com.messranger.repositories.ChatRepository;
-import com.messranger.services.MembersService;
-import com.messranger.services.MessageService;
-import com.messranger.model.PageRequest;
-import com.messranger.entity.Members;
 import com.messranger.entity.Message;
-
+import com.messranger.entity.Members;
+import com.messranger.entity.User;
+import com.messranger.model.PageRequest;
+import com.messranger.repositories.ChatRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ChatService extends BaseService<Chat>{
+public class ChatService extends BaseService<Chat> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChatService.class);
 
-    private MembersService membersService;
-    private MessageService messageService;
+    private final UserService userService;
+    private final MembersService membersService;
+    private final MessageService messageService;
 
     public ChatService() {
         repository = new ChatRepository(dbConfig.getDataSource());
-        membersService = new MembersService();
-        messageService = new MessageService();
+        this.userService = new UserService();
+        this.membersService = new MembersService();
+        this.messageService = new MessageService();
     }
 
     @Override
@@ -102,5 +101,17 @@ public class ChatService extends BaseService<Chat>{
 
             repository.delete(id);
         }
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    public MembersService getMembersService() {
+        return membersService;
+    }
+
+    public MessageService getMessageService() {
+        return messageService;
     }
 }

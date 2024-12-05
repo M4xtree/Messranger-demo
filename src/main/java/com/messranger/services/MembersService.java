@@ -1,47 +1,20 @@
 package com.messranger.services;
 
 import com.messranger.entity.Members;
-import com.messranger.repositories.MembersRepository;
-import com.messranger.services.ChatService;
-import com.messranger.entity.Chat;
 import com.messranger.model.PageRequest;
+import com.messranger.repositories.MembersRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class MembersService extends BaseService<Members>{
+public class MembersService extends BaseService<Members> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MembersService.class);
-    private final ChatService chatService;
 
     public MembersService() {
         repository = new MembersRepository(dbConfig.getDataSource());
-        this.chatService = new ChatService();
-    }
-
-    @Override
-    public Members update(Members instance) {
-        LOGGER.info("Updating member role in chat with ID: {}", instance.getChatId());
-        Members member = repository.find(instance.getChatId(),instance.getUserId()).orElseThrow();
-
-        if (instance.getRole() == null || instance.getRole().isEmpty()) {
-            throw new IllegalArgumentException("Role cannot be null or empty");
-        }
-        if (instance.getJoinedAt() == null) {
-            instance.setJoinedAt(LocalDateTime.now());
-        }
-
-        member.setChatId(instance.getChatId());
-        member.setUserId(instance.getUserId());
-        member.setRole(instance.getRole());
-        member.setCanDeleteMessages(instance.isCanDeleteMessages());
-        member.setCanAddParticipants(instance.isCanAddParticipants());
-        member.setCanEditMessages(instance.isCanEditMessages());
-        member.setCaret(instance.getCaret());
-        member.setJoinedAt(LocalDateTime.now());
-        return ((MembersRepository) repository).updateMembers(member);
     }
 
     @Override
@@ -65,18 +38,31 @@ public class MembersService extends BaseService<Members>{
             member.setCaret(instance.getCaret());
             member.setJoinedAt(instance.getJoinedAt());
             return repository.update(member);
-        } else {
-            Chat chat = chatService.find(instance.getChatId()).orElseThrow(() -> new IllegalArgumentException("Chat not found"));
-            if (chat.getType().equals("p2p")) {
-                List<Members> members = findAll(new PageRequest(0, Long.MAX_VALUE, new ArrayList<>()), new Members(instance.getChatId(), null, null, false, false, false, null, null));
-                if (members.size() >= 2) {
-                    throw new IllegalArgumentException("P2P chat can have maximum 2 members");
-                }
-            }
-
-            instance.setJoinedAt(LocalDateTime.now());
-            return repository.save(instance);
         }
+        return null;
+    }
+
+    @Override
+    public Members update(Members instance) {
+        LOGGER.info("Updating member role in chat with ID: {}", instance.getChatId());
+        Members member = repository.find(instance.getChatId(), instance.getUserId()).orElseThrow();
+
+        if (instance.getRole() == null || instance.getRole().isEmpty()) {
+            throw new IllegalArgumentException("Role cannot be null or empty");
+        }
+        if (instance.getJoinedAt() == null) {
+            instance.setJoinedAt(LocalDateTime.now());
+        }
+
+        member.setChatId(instance.getChatId());
+        member.setUserId(instance.getUserId());
+        member.setRole(instance.getRole());
+        member.setCanDeleteMessages(instance.isCanDeleteMessages());
+        member.setCanAddParticipants(instance.isCanAddParticipants());
+        member.setCanEditMessages(instance.isCanEditMessages());
+        member.setCaret(instance.getCaret());
+        member.setJoinedAt(LocalDateTime.now());
+        return ((MembersRepository) repository).updateMembers(member);
     }
 
     public void delete(String chatId, String userId) {
@@ -138,5 +124,9 @@ public class MembersService extends BaseService<Members>{
         member.setRole("redactor");
         member.setCanEditMessages(true);
         repository.update(member);
+    }
+
+    public List<Members> findAll(PageRequest pageRequest, Members filter) {
+        return repository.findAll(pageRequest, filter);
     }
 }
