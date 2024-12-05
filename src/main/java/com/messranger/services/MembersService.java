@@ -39,7 +39,7 @@ public class MembersService extends BaseService<Members> {
             member.setJoinedAt(instance.getJoinedAt());
             return repository.update(member);
         }
-        return repository.save(instance);
+        return ((MembersRepository) repository).save(instance);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class MembersService extends BaseService<Members> {
         member.setCanEditMessages(instance.isCanEditMessages());
         member.setCaret(instance.getCaret());
         member.setJoinedAt(LocalDateTime.now());
-        return ((MembersRepository) repository).updateMembers(member);
+        return ((MembersRepository) repository).update(member);
     }
 
     public void delete(String chatId, String userId) {
