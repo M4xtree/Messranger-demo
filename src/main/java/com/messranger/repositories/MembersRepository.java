@@ -117,7 +117,7 @@ public class MembersRepository extends BaseRepository<Members> {
 
     @Override
     public Members save(Members instance) {
-        String insertSql = "INSERT INTO members (chat_id, user_id, role, can_delete_messages, can_add_participants, can_edit_messages, caret, joined_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertSql = SqlConstants.INSERT + SqlConstants.INTO +"members (chat_id, user_id, role, can_delete_messages, can_add_participants, can_edit_messages, caret, joined_at)" + SqlConstants.VALUES +"(?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = dataSource.getConnection();
              PreparedStatement insertStatement = connection.prepareStatement(insertSql)) {
 
