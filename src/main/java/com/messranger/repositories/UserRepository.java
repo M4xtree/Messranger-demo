@@ -1,71 +1,71 @@
-package com.messranger.repositories;
+    package com.messranger.repositories;
 
-import com.messranger.entity.User;
-import com.messranger.model.FilterColumn;
-import com.zaxxer.hikari.HikariDataSource;
+    import com.messranger.entity.User;
+    import com.messranger.model.FilterColumn;
+    import com.zaxxer.hikari.HikariDataSource;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+    import java.sql.*;
+    import java.util.ArrayList;
+    import java.util.List;
+    import java.util.Optional;
 
-public class UserRepository extends BaseRepository<User> {
-    public UserRepository(HikariDataSource dataSource) {
-        super(dataSource);
+    public class UserRepository extends BaseRepository<User> {
+        public UserRepository(HikariDataSource dataSource) {
+            super(dataSource);
+        }
+
+
+        @Override
+        protected String getTableName() {
+            return "users";
+        }
+
+        @Override
+        protected String getIdColumn() {
+            return "id";
+        }
+
+        @Override
+        protected String[] getColumnNames() {
+            return new String[]{"nickname", "phone_number"};
+        }
+
+        @Override
+        protected String[] getColumnPlaceholders() {
+            return new String[]{"?", "?"};
+        }
+
+        @Override
+        protected List<FilterColumn<?>> toFilterColumns(User filter) {
+            List<FilterColumn<?>> result = new ArrayList<>();
+            Optional.ofNullable(filter.getNickname())
+                    .ifPresent(it -> result.add(new FilterColumn<>("nickname", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
+            Optional.ofNullable(filter.getPhoneNumber())
+                    .ifPresent(it -> result.add(new FilterColumn<>("phone_number", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
+            return result;
+        }
+
+        @Override
+        protected void prepareInsertStatement(PreparedStatement statement, User user) throws SQLException {
+            statement.setString(1, user.getId());
+            statement.setString(2, user.getNickname());
+            statement.setString(3, user.getPhoneNumber());
+        }
+
+        @Override
+        protected void prepareUpdateStatement(PreparedStatement statement, User user) throws SQLException {
+            statement.setString(1, user.getNickname());
+            statement.setString(2, user.getPhoneNumber());
+            statement.setString(3, user.getId());
+        }
+
+        @Override
+        protected User mapResultSetToEntity(ResultSet resultSet) throws SQLException {
+            String nickname = resultSet.getString("nickname");
+            String phoneNumber = resultSet.getString("phone_number");
+            return new User(nickname, phoneNumber);
+        }
     }
-
-
-    @Override
-    protected String getTableName() {
-        return "users";
-    }
-
-    @Override
-    protected String getIdColumn() {
-        return "id";
-    }
-
-    @Override
-    protected String[] getColumnNames() {
-        return new String[]{"nickname", "phone_number"};
-    }
-
-    @Override
-    protected String[] getColumnPlaceholders() {
-        return new String[]{"?", "?"};
-    }
-
-    @Override
-    protected List<FilterColumn<?>> toFilterColumns(User filter) {
-        List<FilterColumn<?>> result = new ArrayList<>();
-        Optional.ofNullable(filter.getNickname())
-                .ifPresent(it -> result.add(new FilterColumn<>("nickname", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
-        Optional.ofNullable(filter.getPhoneNumber())
-                .ifPresent(it -> result.add(new FilterColumn<>("phone_number", "=", it, (stmt, idx) -> stmt.setString(idx, it))));
-        return result;
-    }
-
-    @Override
-    protected void prepareInsertStatement(PreparedStatement statement, User user) throws SQLException {
-        statement.setString(1, user.getId());
-        statement.setString(2, user.getNickname());
-        statement.setString(3, user.getPhoneNumber());
-    }
-
-    @Override
-    protected void prepareUpdateStatement(PreparedStatement statement, User user) throws SQLException {
-        statement.setString(1, user.getNickname());
-        statement.setString(2, user.getPhoneNumber());
-        statement.setString(3, user.getId());
-    }
-
-    @Override
-    protected User mapResultSetToEntity(ResultSet resultSet) throws SQLException {
-        String nickname = resultSet.getString("nickname");
-        String phoneNumber = resultSet.getString("phone_number");
-        return new User(nickname, phoneNumber);
-    }
-}
 
 
 

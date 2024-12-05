@@ -115,4 +115,20 @@ public class MembersRepository extends BaseRepository<Members> {
         }
     }
 
+    @Override
+    public Members save(Members instance) {
+        String insertSql = SqlConstants.INSERT + SqlConstants.INTO
+                + " (" + getIdColumn() + ", " + String.join(", ", getColumnNames()) + ")"
+                + SqlConstants.VALUES +"(?, " + String.join(", ", getColumnPlaceholders()) + ")";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement insertStatement = connection.prepareStatement(insertSql)) {
+
+            prepareInsertStatement(insertStatement, instance);
+
+            return instance;
+        } catch (SQLException e) {
+            LOGGER.error(e.toString());
+            throw new RuntimeException("Error while saving entity", e);
+        }
+    }
 }

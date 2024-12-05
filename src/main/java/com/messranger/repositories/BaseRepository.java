@@ -254,6 +254,4 @@ public abstract class BaseRepository<T> implements Repository<T> {
             throw new RuntimeException("Error deleting entity", e);
         }
     }
-
-
 }
